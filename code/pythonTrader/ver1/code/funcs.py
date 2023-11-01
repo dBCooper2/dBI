@@ -1,5 +1,4 @@
 # This contains the Main Functions for the Program to keep the Build.py file clean
-import config as cf
 import stock as s
 from tda import auth, client
 import json
