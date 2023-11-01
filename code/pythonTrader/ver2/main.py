@@ -10,4 +10,11 @@ chromedriver_path = '/opt/homebrew/bin/chromedriver'
 
 c = f.connect_to_api(key['api_key'], headers['redirect_uri'], headers['token_path'])
 
-portfolio = f.get_portfolio(c, headers['td_acct_num'])
+#portfolio = f.get_portfolio(c, headers['td_acct_num'])
+
+print(f.get_stock_hist_data(c, 'AMD', '5m'))
+print()
+
+print(f.get_stock_info(c, 'AMD', 'symbol-search'))
+print()
+print(f.get_stock_info(c, 'AMD', 'fundamental'))

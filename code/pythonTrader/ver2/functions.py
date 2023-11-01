@@ -33,29 +33,38 @@ def get_portfolio(client, acct_num): # Returns positions and balances for a give
     balances = __get_balances(r)
     return [positions, balances]
 
-def get_stock_hist_data(c: Client, symbol, start_datetime,end_datetime, need_extended_hours_data, periods): # returns historical data for a stock given a timeframe and # of periods(how many rows in the table)
+def get_stock_hist_data(c: Client, symbol, periods): # returns historical data for a stock given a timeframe and # of periods(how many rows in the table)
     # possible params are every 1m, 5m, 10m, 15m, 30m, 1d, 1w
-    if periods.equals('1m'):
-        data = c.get_price_history_every_minute(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('5m'):
-        data = c.get_price_history_every_five_minutes(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('10m'):
-        data = c.get_price_history_every_ten_minutes(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('15m'):
-        data = c.get_price_history_every_fifteen_minutes(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('30m'):
-        data = c.get_price_history_every_thirty_minutes(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('1d'):
-        data = c.get_price_history_every_day(symbol, start_datetime, end_datetime, need_extended_hours_data)
-    elif periods.equals('1w'):
-        data = c.get_price_history_every_week(symbol, start_datetime, end_datetime, need_extended_hours_data)
+    if periods == '1m':
+        data = c.get_price_history_every_minute(symbol)
+    elif periods == '5m':
+        data = c.get_price_history_every_five_minutes(symbol)
+    elif periods == '10m':
+        data = c.get_price_history_every_ten_minutes(symbol)
+    elif periods == '15m':
+        data = c.get_price_history_every_fifteen_minutes(symbol)
+    elif periods == '30m':
+        data = c.get_price_history_every_thirty_minutes(symbol)
+    elif periods == '1d':
+        data = c.get_price_history_every_day(symbol)
+    elif periods == '1w':
+        data = c.get_price_history_every_week(symbol)
     else:
          print("wrong period format!")
          return None
-    return data
+    return data.json()
 
-def get_sector_hist_data(sector, timeframe, periods): # access the top X companies in a sector over a given timeframe and # of periods
-    pass
+def get_stock_info(c: Client, symbol, projection):
+    if projection == 'symbol-search':
+        proj = c.Instrument.Projection(projection)
+        data = c.search_instruments(symbol, proj).json()
+    elif projection == 'fundamental':
+        proj = c.Instrument.Projection(projection)
+        data = c.search_instruments(symbol, proj).json()
+    else:
+        data = None
+        print("These endpoints have not been constructed yet!")
+    return data
 
 def convert_to_df(): # Convert Json to Dataframe
     pass
