@@ -1,0 +1,71 @@
+{'securitiesAccount': 
+	{'type': 'CASH', 
+	 'accountId': 'xxxxx',
+	 'roundTrips': 0,
+	 'isDayTrader': False, 
+	 'isClosingOnlyRestricted': False, 
+	 'positions': [
+		{'shortQuantity': 0.0, 
+		'averagePrice': 0.0, 
+		'currentDayCost': 0.0, 
+		'currentDayProfitLoss': 0.0, 
+		'currentDayProfitLossPercentage': 0.0, 
+		'longQuantity': 0.0, 
+		'settledLongQuantity': 0.0, 
+		'settledShortQuantity': 0.0, 
+		'instrument': {
+			'assetType': 'EQUITY', 
+			'cusip': '58933Y105', 
+			'symbol': 'MRK'
+			}, 
+		'marketValue': 0.0, 
+		'maintenanceRequirement': 0.0, 
+		'previousSessionLongQuantity': 0.0
+		}], 
+		'initialBalances': {
+			'accruedInterest': 0.0, 
+			'cashAvailableForTrading': 0.0, 
+			'cashAvailableForWithdrawal': 0.0, 
+			'cashBalance': 0.0, 
+			'bondValue': 0.0, 
+			'cashReceipts': 0.0, 
+			'liquidationValue': 0.0, 
+			'longOptionMarketValue': 0.0, 
+			'longStockValue': 0.0, 
+			'moneyMarketFund': 0.0, 
+			'mutualFundValue': 0.0, 
+			'shortOptionMarketValue': 0.0, 
+			'shortStockValue': 0.0, 
+			'isInCall': False, 
+			'unsettledCash': 0.0, 
+			'cashDebitCallValue': 0.0, 
+			'pendingDeposits': 0.0, 
+			'accountValue': 0.0}, 
+			'currentBalances': {
+				'accruedInterest': 0.0, 
+				'cashBalance': 0.0, 
+				'cashReceipts': 0.0, 
+				'longOptionMarketValue': 0.0, 
+				'liquidationValue': 0.0, 
+				'longMarketValue': 0.0, 
+				'moneyMarketFund': 0.0, 
+				'savings': 0.0, 
+				'shortMarketValue': 0.0, 
+				'pendingDeposits': 0.0, 
+				'cashAvailableForTrading': 0.0,
+				'cashAvailableForWithdrawal': 0.0, 
+				'cashCall': 0.0, 
+				'longNonMarginableMarketValue': 0.0, 
+				'totalCash': 0.0, 
+				'shortOptionMarketValue': 0.0, 
+				'mutualFundValue': 0.0, 
+				'bondValue': 0.0, 
+				'cashDebitCallValue': 0.0, 
+				'unsettledCash': 0.0
+				}, 
+			'projectedBalances': {
+				'cashAvailableForTrading': 0.00,
+				'cashAvailableForWithdrawal': 0.00
+				}
+			}
+		}
