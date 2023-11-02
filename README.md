@@ -1,5 +1,8 @@
 # dBI - Business Intelligence Tools for tda-api and TDAmeritrade Developer Accounts
 
+### Note: This Project is NOT FINISHED
+The project is just a collection of functions and classes for now. This will be deleted and a release will be created when the project is finished.
+
 ## About
 I started this project to apply the skills I have learned while studying at TTU to a real-life project. The goal of the dBI repository is to take API data from TD Ameritrade using Alex Golec's tda-api wrapper and my own python code to analyze the data using Python, and export it into several formats. When I started this project I had little experience with Pandas, Tableau and using Python with Excel, so this project will integrate all three of these technologies into the project. dBI will be able to...
 - Perform Portfolio Analysis on a TD Ameritrade customer's portfolio
