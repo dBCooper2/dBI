@@ -57,7 +57,7 @@ def get_stock_hist_data(c: Client, symbol, periods): # returns historical data f
     else:
          print("wrong period format!")
          return None
-    return 
+    return data.json()
 
 # Accesses API using a client, a symbol and a Projection Object(param that finds info on a stock or instrument data)
 def get_instrument(c: Client, symbol, projection):
@@ -75,7 +75,12 @@ def get_instrument(c: Client, symbol, projection):
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Data Conversion: Converting JSONs into Analyzeable Formats
 
+# Calls get_account, then creates objs for each stock that contain their respective instruments and historical price data
+def get_portfolio_objs():
+     pass
+
 def convert_to_df(): # Convert Json to Dataframe
+    # pass in classes with vars(obj_name)
     pass
 
 def convert_to_excel():

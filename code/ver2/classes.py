@@ -1,16 +1,12 @@
-#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Classes for the Program
-#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# Stock Objects Contain the Symbol, Name?, Instrument Obj, and historical data
-class Stock:
-	def __init__(self, position: Position, instruments_id, hist_data_id):
-		self.symbol = vars(position)['symbol']
-		
-		self.i_id = instruments_id
-		self.hd_id = hist_data
-        # add build_dict function like old program
-		
-
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Imports
+from tda.client import Client
+import functions as f
+import pandas as pd
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Positions Object: Contains Data from get_account() API calls
 class Position:
     def __init__(self, symbol: str, cusip: str, position_data: dict):
         self.symbol = symbol
@@ -32,7 +28,7 @@ class Position:
         self.maintenanceRequirement = position_data['maintenanceRequirement']
         self.previousSessionLongQuantity = position_data['previousSessionLongQuantity']
 
-#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////      
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Instrument:
     def __init__(self, symbol: str, json: dict):
         f = 'fundamental'
@@ -48,12 +44,12 @@ class Instrument:
         self.high52 = json[symbol][f]['high52']
         self.low52 = json[symbol][f]['low52']
         self.marketCap = json[symbol][f]['marketCap']
-        self.dividendAmount = json[symbol][f]['dividentAmount']
-        self.dividendYield = json[symbol][f]['dividendYield']
-        self.dividendDate = json[symbol][f]['dividendDate']
-        self.dividendPayAmount = json[symbol][f]['dividendPayAmount']
-        self.divGrowthRate3Year = json[symbol][f]['divGrowthRate3Year']
-        self.dividendPayDate = json[symbol][f]['dividendPayDate']
+        #self.dividendAmount = json[symbol][f]['dividentAmount']
+        #self.dividendYield = json[symbol][f]['dividendYield']
+        #self.dividendDate = json[symbol][f]['dividendDate']
+        #self.dividendPayAmount = json[symbol][f]['dividendPayAmount']
+        #self.divGrowthRate3Year = json[symbol][f]['divGrowthRate3Year']
+        #self.dividendPayDate = json[symbol][f]['dividendPayDate']
         self.beta = json[symbol][f]['beta']
         self.peRatio = json[symbol][f]['peRatio']
         self.pegRatio = json[symbol][f]['pegRatio']
@@ -74,7 +70,7 @@ class Instrument:
         self.interestCoverage = json[symbol][f]['interestCoverage']
         self.totalDebtToCapital = json[symbol][f]['totalDebtToCapital']
         self.ltDebtToEquity = json[symbol][f]['ltDebtToEquity']
-        self.totalDebtToEquity = jsont[symbol][f]['totalDebtToEquity']
+        #self.totalDebtToEquity = jsont[symbol][f]['totalDebtToEquity']
         self.epsTTM = json[symbol][f]['epsTTM']
         self.epsChangePercentTTM = json[symbol][f]['epsChangePercentTTM']
         self.epsChangeYear = json[symbol][f]['epsChangeYear']
@@ -91,7 +87,49 @@ class Instrument:
         self.vol10DayAvg = json[symbol][f]['vol10DayAvg']
         self.vol3MonthAvg = json[symbol][f]['vol3MonthAvg']
 
-#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Class that takes the 'candles' key from tda-api and translates it into a dict to be converted 
+# takes in list of indeterminate length
+# each list item is a dict with keys: open: double, high: double, low: double, close: double, volume: int64, datetime: int64
+# create pandas dataframe, rows are datetime vals, cols are open, high, low, close and volume
+# Pseudocode:
+"""
+indices = []
+for item in candles_list:
+    append datetime
+"""
+class HistData:
+	def __init__(self, symbol: str, cusip: str, candles_list: list):
+		self.symbol = symbol
+		self.cusip = cusip
+		if isinstance(candles_list, list):
+			self.hist_data = pd.DataFrame(candles_list)
+			self.hist_data['datetime'] = pd.to_datetime(self.hist_data['datetime'], unit='ms') # Convert the 'datetime' column to a datetime object (assuming it's in Unix timestamp format)
+			self.hist_data.set_index('datetime', inplace=True) # Set the 'datetime' column as the index
+		else:
+			print('candles are not in list format, exiting...')
+			exit()
+		
+		
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Stock Objects Contain the Symbol, Instrument Obj, and historical data
+# TODO:Add Positions Data for the Stock Later
+class Stock:
+	def __init__(self, symbol: str, cusip: str, c: Client, periods: str):
+		self.symbol = symbol
+		self.cusip = cusip
+		instrument_data = f.get_instrument(c, symbol, 'fundamental')
+		self.instruments = Instrument(symbol, instrument_data)
+		hist_data_for_obj = f.get_stock_hist_data(c, symbol, periods)
+		self.hist_data = HistData(symbol, cusip, hist_data_for_obj['candles'])
+		print(self)
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Portfolio: Portfolios contain a List of Stock Objects Representing the Positions the Account is holding, as well as a Balances Object containing available funds in the Account
+class Portfolio:
+	def __init__(self):
+		pass
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Stock GUI Object: This Object is for Displaying a Quick Look at a Stock for a later GUI Implementation
 # Taken from portfolio_viewing_script repo
 """
@@ -166,7 +204,7 @@ class Stock_GUI:
 			
 		return ret_string
 
-#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Stock Class Using Data from TDAmeritrade's Website, Not sure if I need this yet        
 """
 class Stock:
