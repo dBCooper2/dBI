@@ -7,9 +7,8 @@ import pandas as pd
 # each list item is a dict with keys: open: double, high: double, low: double, close: double, volume: int64, datetime: int64
 # create pandas dataframe, rows are datetime vals, cols are open, high, low, close and volume
 class HistData:
-	def __init__(self, symbol: str, cusip: str, candles_list: list):
+	def __init__(self, symbol: str, candles_list: list):
 		self.symbol = symbol
-		self.cusip = cusip
 		if isinstance(candles_list, list):
 			self.hist_data = pd.DataFrame(candles_list)
 			self.hist_data['datetime'] = pd.to_datetime(self.hist_data['datetime'], unit='ms') # Convert the 'datetime' column to a datetime object (assuming it's in Unix timestamp format)

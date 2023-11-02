@@ -66,6 +66,8 @@ def get_stock_hist_data(c: Client, symbol, periods): # returns historical data f
         data = c.get_price_history_every_day(symbol)
     elif periods == '1w':
         data = c.get_price_history_every_week(symbol)
+    elif periods == 'x': # If we don't want Hist Data
+         return {}
     else:
          print("wrong period format!")
          return None

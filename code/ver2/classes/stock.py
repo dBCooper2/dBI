@@ -11,26 +11,23 @@ import position as Position
 # Stock Objects Contain the Symbol, Instrument Obj, and historical data
 # TODO:Build Struct to output the data in a cleaner way
 class Stock:
-	def __init__(self, symbol: str, cusip: str, c: Client, periods: str, p: Position):
+	def __init__(self, symbol: str, c: Client, periods: str, p: Position):
 		self.symbol = symbol
-		self.cusip = cusip
 		self.position_data = vars(p)
 		self.position_data.__delattr__['symbol']
-		self.position_data.__delattr__['cusip']
 		
 		instrument_data = f.get_instrument(c, symbol, 'fundamental')
 		self.instruments = Instrument(symbol, instrument_data)
 		hist_data_for_obj = f.get_stock_hist_data(c, symbol, periods)
-		self.hist_data = HistData(symbol, cusip, hist_data_for_obj['candles'])
+		self.hist_data = HistData(symbol, hist_data_for_obj['candles'])
 		print(self)
 		
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Stock_nb Objects Contain the Symbol, CUSIP but contain no position data that reveals cash amounts(so just P/L %s)
 class Stock_nb:
-	def __init__(self, symbol: str, cusip: str, p: Position):
+	def __init__(self, symbol: str, p: Position):
 		self.symbol = symbol
-		self.cusip = cusip
-		self.position_data = p.currentDayProfitLossPercentage
+		self.position_data = p
 		print(self)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

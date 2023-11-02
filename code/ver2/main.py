@@ -2,7 +2,10 @@
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Imports
 import functions as f
-from classes import Stock, Stock_nb, Position
+from classes.hist_data import HistData
+from classes.instrument import Instrument
+from classes.position import Position
+from classes.stock import Stock, Stock_nb
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Main Method Pseudocode
@@ -66,47 +69,3 @@ headers = f.get_headers('/Users/trowland/.secret/tda-api_data.json') # extra det
 
 chrome_path = '/Applications'
 chromedriver_path = '/opt/homebrew/bin/chromedriver'
-
-print('Welcome to dBI. Connecting to API...')
-c = f.connect_to_api(key['api_key'], headers['redirect_uri'], headers['token_path'])
-print('API Connected.')
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# Do Any Testing Here so you don't have to go through the Input Section
-data = f.get_portfolio(c, headers['td_acct_num'], True)
-stock_list = []
-for idx in data[0]:
-    s = Position(idx)
-    s2 = Stock_nb(s.symbol, s.cusip, s)
-    stock_list.append(s2)
-
-
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-user_in = input('Do you want to:\n1. View Your Portfolio\n2. Perform Analysis on a Stock/Portfolio\nPlease enter the number of the task you want performed\n')
-data = f.get_portfolio(c, headers['td_acct_num'], True)
-if user_in == '1': # View the Portfolio
-    print('Portfolio Loading...')
-
-    #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-elif user_in == '1 --no-balances': # View the Portfolio without displaying any compromising financial info
-    print('Portfolio Loading...')
-    stock_list = []
-    for idx in data[0]:
-        s = Position(idx)
-        s2 = Stock_nb(s.symbol, s.cusip, s)
-        stock_list.append(s2)
-        f.stocknb_tostring(stock_list)
-    #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-elif user_in == '2': # Perform Data Analysis
-    user_in = '0'
-    user_in = input('Do you want to:\n1. Analyze a Single Stock\n2. Analyze your Portfolio\nAnalyze a Custom Portfolio\nPlease enter the number of the task you want performed\n')
-    #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if user_in == '1': # Analyze a Single Stock
-        pass # prompt for stock symbol
-        #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    elif user_in == '2': # Analyze the User's Portfolio
-        pass
-        #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    elif user_in == '3': # Analyze a Custom Portfolio
-        pass # prompt for stocks
