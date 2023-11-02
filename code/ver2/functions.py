@@ -5,7 +5,11 @@ import json
 from tda import auth as a
 from tda.client import Client
 import os
-from classes import Stock, Position
+
+from classes.hist_data import HistData
+from classes.instrument import Instrument
+from classes.stock import Stock, Stock_nb
+from classes.position import Position
 
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Accessing Key Data to Connect to the API:
@@ -31,11 +35,19 @@ def connect_to_api(api_key, redirect_uri, token_path):
             c = a.client_from_login_flow(driver, api_key, redirect_uri, token_path)
     return c
 
-def get_portfolio(client, acct_num): # Returns positions and balances for a given account
-    r = client.get_account(acct_num, fields=client.Account.Fields.POSITIONS)
+def get_portfolio(client, acct_num, no_balances: bool): # Returns positions and balances for a given account
+    r = client.get_account(acct_num, fields=client.Account.Fields.POSITIONS).json()
     # helper functions to sort through and filter the data
-    positions = filter_positions(r)
-    balances = __get_balances(r)
+    if no_balances == True:
+         positions = filter_positions(r)
+         balances = None
+    elif no_balances == False:
+        positions = filter_positions(r)
+        balances = __get_balances(r)
+    else:
+         positions = None
+         balances = None
+
     return [positions, balances]
 
 def get_stock_hist_data(c: Client, symbol, periods): # returns historical data for a stock given a timeframe and # of periods(how many rows in the table)
@@ -76,8 +88,9 @@ def get_instrument(c: Client, symbol, projection):
 # Data Conversion: Converting JSONs into Analyzeable Formats
 
 # Calls get_account, then creates objs for each stock that contain their respective instruments and historical price data
-def get_portfolio_objs():
-     pass
+def get_portfolio_objs(c: Client, acct_num, no_balances: str):
+     acct = get_portfolio(c, acct_num)
+
 
 def convert_to_df(): # Convert Json to Dataframe
     # pass in classes with vars(obj_name)
@@ -122,5 +135,10 @@ def convert_positions_to_class(positions): #converts json data into a list of al
 def calculate_percent_makeup_in_portfolio():
      pass
 
-
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Helper Methods for Viewing the Portfolio
+def stocknb_tostring(stock_list: list):
+     print('not done yet, check back later')
+     # The list is a collection of Stock_nb's, add a toString function to the class file
+     return
 
