@@ -3,11 +3,11 @@
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Stock Objects Contain the Symbol, Name?, Instrument Obj, and historical data
 class Stock:
-	def __init__(self, symbol: str, name: str, instruments: dict, hist_data: list):
-		self.symbol = symbol
-		self.name = name
-		self.instruments = instruments
-		self.hist_data = hist_data
+	def __init__(self, position: Position, instruments_id, hist_data_id):
+		self.symbol = vars(position)['symbol']
+		
+		self.i_id = instruments_id
+		self.hd_id = hist_data
         # add build_dict function like old program
 		
 
