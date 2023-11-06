@@ -2,6 +2,14 @@
 
 ## Coding Work:
 - review schema and refactor
+    - Get rid of Stock
+    - Instrument Constructor returns a dataframe row to be concatenated to the portfolio dataframe
+    - Position Constructor returns a dataframe row to be concatenated to the portfolio dataframe
+    - Portfolio contains:
+        - a list of all stock symbols
+        - DF of Instruments
+        - DF of Positions
+        - Price History for each stock
 - convert items to a dataframe format for exporting
 - to_excel(), to_csv() and to_string() functions for all objects
 - trim data down with NumPy Arrays
