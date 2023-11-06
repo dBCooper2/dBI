@@ -1,4 +1,5 @@
 # author: Trevor Rowland
+# Imports
 from tda.client import Client
 # Contains a Position Object. A Position is a Stock held by the Account, 
 #   and only contains data relating to the stock's performance in the

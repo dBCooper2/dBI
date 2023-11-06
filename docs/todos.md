@@ -9,7 +9,7 @@
         - a list of all stock symbols
         - DF of Instruments
         - DF of Positions
-        - Price History for each stock
+        - a list of DFs of Price History for each stock
 - convert items to a dataframe format for exporting
 - to_excel(), to_csv() and to_string() functions for all objects
 - trim data down with NumPy Arrays
