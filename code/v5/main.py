@@ -12,9 +12,16 @@ client_obj = f.connect_to_api(key_dict['api_key'], headers_dict['redirect_uri'],
 print('connected to api')
 
 acct_dict = f.get_acct(client_obj, headers_dict['td_acct_num'], False)
+#print(acct_dict)
 print('received acct data')
 if isinstance(acct_dict, dict) & isinstance(client_obj, Client):
     print('params are correct format')
 
 p = Portfolio(client_obj, acct_dict, '')
 print(p)
+print()
+print('Positions\n')
+print(p.positions)
+print()
+print('Instruments\n')
+print(p.instruments)
