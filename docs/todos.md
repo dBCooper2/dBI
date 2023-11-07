@@ -2,20 +2,21 @@
 
 ## Coding Work:
 - review schema and refactor
-    - Get rid of Stock
-    - Instrument Constructor returns a dataframe row to be concatenated to the portfolio dataframe
-    - Position Constructor returns a dataframe row to be concatenated to the portfolio dataframe
-    - Portfolio contains:
-        - a list of all stock symbols
-        - DF of Instruments
-        - DF of Positions
-        - a list of DFs of Price History for each stock
+   - Portfolio is made of:
+        - A Dictionary of Positions + Instruments(Instruments is concatenated to the Position) in the format:
+            {symbol1: data1, symbol2: data2, ..., symbolN: dataN}
+        - Figure out Price Histories after you can clean Positions and Instruments
+
 - convert items to a dataframe format for exporting
 - to_excel(), to_csv() and to_string() functions for all objects
 - trim data down with NumPy Arrays
 - Create Functions for:
     - Portfolio Analysis(Risk & Expected Return)
     - Stock Analysis(Risk and Expected Return)
+    - Linear Optimization
+        - Maximize return
+        - Minimize Risk
+        - Maximize Dividends
     - Linear Regression Modeling
     - Moving Average Models
     - Exponential Smoothing Models

@@ -6,9 +6,8 @@ from tda import auth as a
 from tda.client import Client
 import os
 
-from classes.hist_data import HistData
+from classes.price_history import PriceHistory
 from classes.instrument import Instrument
-from classes.stock import Stock, Stock_nb
 from classes.position import Position
 
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,20 +34,23 @@ def connect_to_api(api_key, redirect_uri, token_path):
             c = a.client_from_login_flow(driver, api_key, redirect_uri, token_path)
     return c
 
-def get_portfolio(client, acct_num, no_balances: bool): # Returns positions and balances for a given account
+def get_portfolio(client, acct_num, is_balances: bool): # Returns positions and balances for a given account
     r = client.get_account(acct_num, fields=client.Account.Fields.POSITIONS).json()
     # helper functions to sort through and filter the data
-    if no_balances == True:
-         positions = filter_positions(r)
-         balances = None
-    elif no_balances == False:
+    if is_balances == False:
+        positions = filter_positions(r)
+        balances = None
+        return positions
+    elif is_balances == True:
         positions = filter_positions(r)
         balances = __get_balances(r)
+        return [positions, balances]
     else:
-         positions = None
-         balances = None
-
-    return [positions, balances]
+        positions = None
+        balances = None
+        return [positions, balances]
+    
+    return
 
 def get_stock_hist_data(c: Client, symbol, periods): # returns historical data for a stock given a timeframe and # of periods(how many rows in the table)
     # possible params are every 1m, 5m, 10m, 15m, 30m, 1d, 1w
