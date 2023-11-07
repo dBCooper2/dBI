@@ -1,5 +1,6 @@
 from tda.client import Client
 from classes.portfolio import Portfolio  
+from classes.price_history import PriceHistory
 import functions as f
 
 key_dict = f.get_keys('/Users/trowland/.secret/tda-api.json') # key value pair is 'api_key':'KEY'
@@ -25,3 +26,6 @@ print(p.positions)
 print()
 print('Instruments\n')
 print(p.instruments)
+print()
+print('Price History of AMD:\n')
+print(PriceHistory(client_obj, 'AMD', 'x'))

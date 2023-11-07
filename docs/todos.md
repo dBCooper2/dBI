@@ -3,9 +3,10 @@
 ## Coding Work:
 - review schema and refactor
    - Portfolio is made of:
-        - A Dictionary of Positions + Instruments(Instruments is concatenated to the Position) in the format:
+        - A Dictionary of Positions + Instruments(Instruments is concatenated to the Position) in the format: - DONE
             {symbol1: data1, symbol2: data2, ..., symbolN: dataN}
-        - Figure out Price Histories after you can clean Positions and Instruments
+        - Create a Dataframe with Positions and Instruments merged together
+        - Figure out Price Histories after you can clean Positions and Instruments - TODO
 
 - convert items to a dataframe format for exporting
 - to_excel(), to_csv() and to_string() functions for all objects
