@@ -70,3 +70,5 @@ class Portfolio:
     
     def get_all_price_history(self):
         return self.__price_history_dict
+
+

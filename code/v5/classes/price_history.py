@@ -15,7 +15,7 @@ class PriceHistory:
 
 
     def get_symbol(self):
-        return self.symbol
+        return self.__symbol
 
     def __build_price_history_df(self, ph: dict):
         df = pd.DataFrame.from_records(ph[self.__symbol])

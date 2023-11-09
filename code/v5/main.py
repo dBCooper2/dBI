@@ -9,6 +9,8 @@ headers_dict = f.get_headers('/Users/trowland/.secret/tda-api_data.json') # extr
 chrome_path = '/Applications'
 chromedriver_path = '/opt/homebrew/bin/chromedriver'
 
+file_output_path = 'output.csv'
+
 client_obj = f.connect_to_api(key_dict['api_key'], headers_dict['redirect_uri'], headers_dict['token_path'])
 print('connected to api')
 
@@ -18,6 +20,5 @@ print('received acct data')
 if isinstance(acct_dict, dict) & isinstance(client_obj, Client):
     print('params are correct format')
 
-amd_test = PriceHistory(client_obj, 'AMD', '1w')
-
-print(amd_test.df)
+test = Portfolio(client_obj, acct_dict, '1w')
+f.to_excel(test)
