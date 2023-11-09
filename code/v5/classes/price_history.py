@@ -1,24 +1,34 @@
 from tda.client import Client
+import pandas as pd
 
 class PriceHistory:
     def __init__(self, c: Client, symbol: str, periods: str):
         self.__symbol = symbol
         self.__periods = periods
-        data = self.__get_price_history(c)
-        data2 = data['candles']
-        self.__data = {self.__symbol:data2} #TODO: pull data(Do it in this class, not functions.py!)
 
-        if isinstance(self.data, dict) & isinstance(self.data[self.__symbol], list):
-            print('candles are now a list, inside of a dict with key value == stock symbol')
+        __response_dict = self.__get_price_history(c) # This returns {'candles':[{data},{data},{data}]}
+        # convert to {'symbol':[{data}, {data}, {data}]}
+        self.__data = {self.__symbol:__response_dict['candles']}
+        # print(self.__data)
+
+        self.df = self.__build_price_history_df(self.__data)
+
 
     def get_symbol(self):
-        return self.__symbol
+        return self.symbol
 
-    def __build_dict(self):
-        d = {self.__symbol : self.__data}
+    def __build_price_history_df(self, ph: dict):
+        df = pd.DataFrame.from_records(ph[self.__symbol])
 
-    def get_dict(self):
-        return self.__build_dict()
+        df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
+        df.set_index('datetime', inplace=True)
+        
+        return df
+
+    def __dump_json_to_file(self, data):
+        with open('price_history_check.json', 'w') as file:
+            import json
+            json.dump(self.__data, file)
     
     def __get_price_history(self, c: Client):
         if self.__periods == '1m':
@@ -42,7 +52,7 @@ class PriceHistory:
         elif self.__periods == '1w':
             __data = c.get_price_history_every_week(self.__symbol)
             return __data.json()
-        elif self.__periods == 'x': 
+        elif self.__periods == 'x':
             return {}
         else:
             print("wrong period format!")

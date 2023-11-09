@@ -18,14 +18,6 @@ print('received acct data')
 if isinstance(acct_dict, dict) & isinstance(client_obj, Client):
     print('params are correct format')
 
-p = Portfolio(client_obj, acct_dict, '')
-print(p)
-print()
-print('Positions\n')
-print(p.positions)
-print()
-print('Instruments\n')
-print(p.instruments)
-print()
-print('Price History of AMD:\n')
-print(PriceHistory(client_obj, 'AMD', 'x'))
+amd_test = PriceHistory(client_obj, 'AMD', '1w')
+
+print(amd_test.df)

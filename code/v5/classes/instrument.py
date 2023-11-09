@@ -27,3 +27,4 @@ class Instrument:
     
     def get_data(self): # Used to access the value
         return self.data
+    
