@@ -35,21 +35,48 @@ def get_acct(c: Client, acct_num, is_balances: bool): # Returns positions and ba
 
 
 # Data Processing: Outputting the Data as a CSV or Excel File
+# CSVs CANNOT HAVE SHEETS, ONLY ONE TABLE PER FILE
 def to_csv(data: pd.DataFrame):
     data.to_csv()
 
-def to_excel(p: Portfolio):
+def portfolio_to_csv(p: Portfolio, output_folder: str):
+    # Output multiple CSV Files
+    # 1 for the Positions/Instruments Combined DF
+    # 1 for each Price History Object in the list
+    os.makedirs(output_folder, exist_ok=True)
+
+    p.get_positions_df().to_csv(os.path.join(output_folder, 'Positions.csv'))
+    p.get_instruments_df().to_csv(os.path.join(output_folder, 'Instruments.csv'))
+    
+    for key in p.get_all_price_history():
+        p.get_one_price_history(key).to_csv(os.path.join(output_folder, f'{key}.csv'), index=False)
+    pass
+
+def portfolio_to_excel(p: Portfolio, output_folder):
     # This assumes the Position and Instruments are Merged
     # Add Price Histories as separate sheets
-    excel_file_path = 'output.xlsx'
+    os.makedirs(output_folder, exist_ok=True)
 
-    with pd.ExcelWriter(excel_file_path, engine='xlsxwriter') as writer:
+    excel_filename = 'portfolio.xlsx'
+    fn = get_unique_filename(excel_filename)
+
+    excel_path = os.path.join(output_folder, fn)
+
+    with pd.ExcelWriter(excel_path, engine='xlsxwriter') as writer:
 
         # Write the main DataFrame to the first worksheet
-        p.positions_df.to_excel(writer, sheet_name='Positions', index=False)
-        p.instruments_df.to_excel(writer, sheet_name='Instruments', index=False)
+        p.get_positions_df().to_excel(writer, sheet_name='Positions', index=False)
+        p.get_instruments_df().to_excel(writer, sheet_name='Instruments', index=False)
 
         # Write each DataFrame in the list to a separate worksheet
         for key in p.get_all_price_history().keys():
             p.get_one_price_history(key).to_excel(writer, sheet_name=f'Sheet{key}', index=False)
     pass
+
+def get_unique_filename(base_filename: str):
+    count = 1
+    while True:
+        new_filename = f"{base_filename}-{count}.xlsx"
+        if not os.path.exists(new_filename):
+            return new_filename
+        count += 1

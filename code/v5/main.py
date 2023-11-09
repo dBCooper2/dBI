@@ -21,4 +21,5 @@ if isinstance(acct_dict, dict) & isinstance(client_obj, Client):
     print('params are correct format')
 
 test = Portfolio(client_obj, acct_dict, '1w')
-f.to_excel(test)
+f.portfolio_to_excel(test, 'output')
+f.portfolio_to_csv(test, 'output/CSVs')

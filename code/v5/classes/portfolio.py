@@ -53,9 +53,9 @@ class Portfolio:
                     print('didn\'t create the dict')
 
         # create dataframes of the dictionaries                    
-        self.positions_df = self.dict_to_df(self.__positions_dict)
-        self.instruments_df = self.dict_to_df(self.__instruments_dict)
-        self.merged_i_p_df = self.merge_positions_and_instuments(self.positions_df, self.instruments_df)
+        self.__positions_df = self.dict_to_df(self.__positions_dict)
+        self.__instruments_df = self.dict_to_df(self.__instruments_dict)
+        self.__merged_i_p_df = self.merge_positions_and_instuments(self.__positions_df, self.__instruments_df)
         
 
     def dict_to_df(self, ps: dict):
@@ -70,5 +70,11 @@ class Portfolio:
     
     def get_all_price_history(self):
         return self.__price_history_dict
+    
+    def get_positions_df(self):
+        return self.__positions_df
+    
+    def get_instruments_df(self):
+        return self.__instruments_df
 
 
