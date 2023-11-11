@@ -11,6 +11,7 @@ class Portfolio:
     def __init__(self, c: Client, acct_data: dict, periods: str) -> None:
         # get all positions
         #   Sorting acct_data: PASS IN RAW JSON!!!
+        print('adding positions to a list')
         positions_list = acct_data['securitiesAccount']['positions']
         if isinstance(positions_list, list):
             print('this is a list. Passed Checkpoint 1')
@@ -19,6 +20,7 @@ class Portfolio:
             exit()
 
         self.__positions_dict = dict()
+        print('add positions to dictionary')
         for position in positions_list: # position is the position_dictionary
             if position['instrument']['symbol'] == 'MMDA1':
                 print('MMDA1 Not Added')
@@ -39,14 +41,23 @@ class Portfolio:
                 print('MMDA1 wasn\'t sorted out, exiting...')
             else:
                 # get instruments
+
+                print('getting instrument...')
+
                 i = Instrument(key, c.search_instruments(key, c.Instrument.Projection('fundamental')).json())
+                
+                print('instrument added.')
+
                 if key == i.get_symbol(): # if symbols match
                     self.__instruments_dict[i.get_symbol()] = i.get_data()
                 else:
                     self.__instruments_dict[i.get_symbol()] = i.get_data() # Just get 1 for simplicity
                     break
+                
                 # get price histories
+                print('accessing historical data...')
                 ph = PriceHistory(c, key, periods)
+                print('historical data added')
                 if key == ph.get_symbol(): # if symbols match
                     self.__price_history_dict[ph.get_symbol()] = ph.df
                 else:

@@ -3,7 +3,7 @@ class Instrument:
         # format into {'symbol':{data:dict}}
         # skip adding assetType, already included in positions
         self.symbol = symbol
-
+        
         data = instrument_dict[self.symbol]['fundamental']
         # add exchange to the dict
         data['exchange'] = instrument_dict[self.symbol]['exchange']
@@ -12,9 +12,10 @@ class Instrument:
         # NOTE: add cusip here if needed
 
         # delete duplicate vals
-        del data['symbol']
-        
-        self.data = data
+        self.data = dict()
+        self.data['symbol'] = self.symbol
+        for key in data:
+            self.data[key] = data[key]
 
     def __build_dict(self):
         d = {self.symbol:self.data}
