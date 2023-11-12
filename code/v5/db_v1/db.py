@@ -1,8 +1,6 @@
 import sqlite3
 import pandas as pd
 
-
-
 class ProjectDatabase:
     def __init__(self, db_name: str) -> None:
         # Connect to SQLite database (or create a new one if it doesn't exist)

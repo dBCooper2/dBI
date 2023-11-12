@@ -7,6 +7,7 @@ class PriceHistory:
         self.__periods = periods
 
         __response_dict = self.__get_price_history(c) # This returns {'candles':[{data},{data},{data}]}
+        
         for d in __response_dict['candles']: # d is a dictionary
             # insert the symbol
             d['symbol'] = self.__symbol
