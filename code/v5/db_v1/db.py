@@ -16,8 +16,11 @@ class ProjectDatabase:
         # Execute the query to create the table
         self.cursor.execute(create_table_query)
         
-    def add_data(self, table_name: str, data: pd.DataFrame):
-        pass
+    def append_data(self, table_name: str, data: pd.DataFrame):
+        data.to_sql(table_name, self.conn, index=False, if_exists='append')
+
+    def replace_data(self, table_name: str, data: pd.DataFrame):
+        data.to_sql(table_name, self.conn, index=False, if_exists='replace')
 
     def commit_changes(self):
         # Commit the changes

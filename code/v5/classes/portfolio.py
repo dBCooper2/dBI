@@ -63,18 +63,24 @@ class Portfolio:
                 else:
                     print('didn\'t create the dict')
 
+        # Convert dictionary keys from camelCase to snake_case
+        self.__positions_dict = self.camel_to_snake(self.__positions_dict)
+        self.__instruments_dict = self.camel_to_snake(self.__instruments_dict)
+        # self.__price_history_dict = self.camel_to_snake(self.__price_history_dict) # Not needed, keys are all lowercase and 1 word
+
         # create dataframes of the dictionaries                    
         self.__positions_df = self.dict_to_df(self.__positions_dict)
         self.__instruments_df = self.dict_to_df(self.__instruments_dict)
+        self.__pos_and_inst_df = self.merge_positions_and_instuments(self.__positions_df, self.__instruments_df)
         self.__merged_i_p_df = self.merge_positions_and_instuments(self.__positions_df, self.__instruments_df)
         
 
     def dict_to_df(self, ps: dict):
         return pd.DataFrame.from_dict(ps, orient='index')
     
-    
-    def merge_positions_and_instuments(self, pos: dict, inst: dict):
-        pass
+    # TODO
+    def merge_positions_and_instuments(self, pos: pd.DataFrame, inst: pd.DataFrame):
+        return pd.merge(pos, inst, on='key', how='inner')
 
     def get_one_price_history(self, symbol:str):
         return self.__price_history_dict[symbol]
@@ -89,3 +95,19 @@ class Portfolio:
         return self.__instruments_df
 
 
+    def camel_to_snake(self, data):
+        if isinstance(data, list):
+            return [self.camel_to_snake(item) for item in data]
+        elif isinstance(data, dict):
+            return {self.to_snake_case(key): value for key, value in data.items()}
+        else:
+            return data
+
+    def to_snake_case(self, string):
+        result = [string[0].lower()]
+        for char in string[1:]:
+            if char.isupper():
+                result.extend(['_', char.lower()])
+            else:
+                result.append(char)
+        return ''.join(result)
