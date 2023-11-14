@@ -57,7 +57,7 @@ def portfolio_to_excel(p: Portfolio, output_folder):
     # Add Price Histories as separate sheets
     os.makedirs(output_folder, exist_ok=True)
 
-    excel_filename = 'portfolio.xlsx'
+    excel_filename = 'portfolio'
     fn = get_unique_filename(excel_filename)
 
     excel_path = os.path.join(output_folder, fn)
