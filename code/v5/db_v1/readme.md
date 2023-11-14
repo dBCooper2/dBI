@@ -10,9 +10,11 @@ The current Model is:
 - Price Histories are a Collection of Historical Data Points(price @ open, close, high/low for a predetermined amount of periods)
 - Positions contain data like Profit/Loss Percentages for Stocks the user is already holding
 - Each one of these is a dataframe that will be inserted into the database(I am still learning how to do this properly)
+- Experiments is a collection of calculated data that is specified in the parent readme.
 
 ### - Relationships: 
 - Users:Portfolio is 1:1
 - Portfolio:Positions is 1:M
 - Portfolio:Instrument is 1:M
 - Portfolio: Price History is 1:M
+- Experiments is still TBD
