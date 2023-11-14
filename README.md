@@ -7,7 +7,7 @@ The project is just a collection of functions and classes for now. This will be 
 - The program can export the data into either an Excel Workbook with Positions Data, Instrument Data, and each Historical Data Table as separate, labeled worksheets, as well as a folder of CSV files
 ### In Progress:
 - The program will need a persistent database to export the files into other software smoothly, check out the 'db' branch for the progress on that.
-- The program will contain a GUI element for users forking the file that will contain instructions and steps to create a TD Developer account and the information required for the program to run. This is a contribution by @slizzed to improve his python skills.
+- The program will contain a GUI element for users forking the file that will contain instructions and steps to create a TD Developer account and the information required for the program to run. This is a contribution by @slizzed(https://github.com/slizzed) to improve his python skills.
 ### Planned:
 - The program will calculate a moving average, linear regression and an exponential smoothing model on the Historical Data to determine the expected returns of each stock.
 - These moving averages will be combined with any other necessary data to perform Portfolio Analysis on a Portfolio either pulled from a TDA Account or added via User Input
