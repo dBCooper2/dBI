@@ -2,7 +2,7 @@
 CREATE TABLE Accounts (
     api_key VARCHAR(255),
     redirect_uri VARCHAR(255),
-    account_number INT,
+    account_number VARCHAR(255),
     token_path VARCHAR(255),
     PRIMARY KEY (api_key, redirect_uri, account_number, token_path)
 );

@@ -14,7 +14,24 @@ file_output_path = 'output.csv'
 client_obj = f.connect_to_api(key_dict['api_key'], headers_dict['redirect_uri'], headers_dict['token_path'])
 print('connected to api')
 
-acct_dict = f.get_acct(client_obj, headers_dict['td_acct_num'], False)
+acct_dict = {
+    'securitiesAccount':{
+        'positions':[
+            { 'instrument':{'symbol':'AMD','assetType':'EQUITY'},
+              'averagePrice':117.94,
+              'quantity':5.0},
+            { 'instrument':{'symbol':'MRK','assetType':'EQUITY'},
+              'averagePrice': 101.49,
+              'quantity': 5.0},
+            { 'instrument':{'symbol':'AAPL','assetType':'EQUITY'},
+              'averagePrice':188.77,
+              'quantity':5.0},
+        ]
+    }
+}
+
+
+
 #print(acct_dict)
 print('received acct data')
 if isinstance(acct_dict, dict) & isinstance(client_obj, Client):

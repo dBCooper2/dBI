@@ -71,8 +71,6 @@ class Portfolio:
         # create dataframes of the dictionaries                    
         self.__positions_df = self.dict_to_df(self.__positions_dict)
         self.__instruments_df = self.dict_to_df(self.__instruments_dict)
-        self.__pos_and_inst_df = self.merge_positions_and_instuments(self.__positions_df, self.__instruments_df)
-        self.__merged_i_p_df = self.merge_positions_and_instuments(self.__positions_df, self.__instruments_df)
         
 
     def dict_to_df(self, ps: dict):
