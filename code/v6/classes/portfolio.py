@@ -121,26 +121,43 @@ class Portfolio:
         print('Checkpoint 3a: Can we call the API for r_m and r_rf values...')
         df = pd.DataFrame()
         __r_rf_df = self.__get_price_history_df(r_rf_symbol)
-        __r_rf_df = __r_rf_df.filter(like=ph_col)
+        __r_rf_df = __r_rf_df.filter(like=ph_col) #filter everything except the column we want to check
+
+        __r_rf_df = __r_rf_df.add_prefix(r_rf_symbol+'_')
         # Calculate r_rf Moving Average
-        #__r_rf_df[r_rf_symbol+'_t-1'] = __r_rf_df[r_rf_symbol]
-        #__r_rf_df[r_rf_symbol+'_t-1'].shift(1)
-        #__r_rf_df[r_rf_symbol+'_r_rf'] = (__r_rf_df[r_rf_symbol]/__r_rf_df[r_rf_symbol+'_t-1'])-1
-        #__r_rf_df = __r_rf_df.filter(like='r_rf')
-        print('Checkpoint 3a: r_rf Accessed...')
+        __r_rf_df[r_rf_symbol + '_' + ph_col + '_t-1'] = __r_rf_df[r_rf_symbol + '_' + ph_col].shift(1)
+        __r_rf_df[r_rf_symbol + '_r_rf'] = (__r_rf_df[r_rf_symbol + '_' + ph_col]/__r_rf_df[r_rf_symbol + '_' + ph_col + '_t-1'])-1
+
+        __r_rf_df = __r_rf_df.filter(like='r_rf')
+
+        __r_rf_df_cleaned = __r_rf_df.dropna(how='all')
+        __r_rf_df_cleaned = __r_rf_df_cleaned.rename(columns={r_rf_symbol + '_r_rf' : 'r_rf'})
+        print('Checkpoint 3a: r_rf Accessed and Cleaned into 1 Column...')
 
         __r_m_df = self.__get_price_history_df(r_m_symbol)
         __r_m_df = __r_m_df.filter(like=ph_col)
+
+        __r_m_df = __r_m_df.add_prefix(r_m_symbol+'_')
         # Calculate r_m Moving Average
-        #__r_m_df[r_m_symbol+'_t-1'] = __r_m_df[r_m_symbol]
-        #__r_m_df[r_m_symbol+'_t-1'].shift(1)
-        #__r_m_df[r_m_symbol+'_r_m'] = (__r_m_df[r_m_symbol]/__r_m_df[r_m_symbol+'_t-1'])-1
-        #__r_m_df = __r_m_df.filter(like='r_m')
-        print('Checkpoint 3a: r_m Accessed...\nCheckpoint 3a Passed.\n')
+        __r_m_df[r_m_symbol + '_' + ph_col + '_t-1'] = __r_m_df[r_m_symbol + '_' + ph_col].shift(1)
+        __r_m_df[r_m_symbol + '_r_m'] = (__r_m_df[r_m_symbol + '_' + ph_col]/__r_m_df[r_m_symbol + '_' + ph_col + '_t-1'])-1
+
+        __r_m_df = __r_m_df.filter(like='r_m')
+
+        __r_m_df_cleaned = __r_m_df.dropna(how='all')
+        __r_m_df_cleaned = __r_m_df_cleaned.rename(columns={r_m_symbol + '_r_m' : 'r_m'})
+        print('Checkpoint 3a: r_m Accessed and Cleaned into 1 Column...\nCheckpoint 3a Passed.\n')
 
         print('Checkpoint 3b: Filter Price Histories into a Weighted Average of r_i...')
         __r_i_df = self.__get_portfolio_exp_return(ph_col=ph_col)
 
+        print('Checkpoint 3c: Assembling Final DataFrame...')
+        # Final DataFrame Should be r_i, r_rf, and (r_m-r_rf)
+        __r_m_minus_r_rf_df = pd.concat([__r_m_df_cleaned, __r_rf_df_cleaned], axis=1)
+        __r_m_minus_r_rf_df['r_m-r_rf'] = __r_m_minus_r_rf_df['r_m']-__r_m_minus_r_rf_df['r_rf']
+        
+        __capm_df = pd.concat([__r_i_df, __r_rf_df_cleaned, __r_m_minus_r_rf_df['r_m-r_rf']], axis=1)
+        print(__capm_df.head())
 
         pass
 
@@ -149,48 +166,30 @@ class Portfolio:
     # 3. return the 2 column DF of (datetime, Weighted_exp_return)
     def __get_portfolio_exp_return(self, ph_col: str)->pd.DataFrame:
         exp_ret_df = self.__ph_df.copy()
-        print(exp_ret_df.head())
+        #print(exp_ret_df.head())
         exp_ret_df = exp_ret_df.filter(like=ph_col)
-        print(exp_ret_df.head())
+        #print(exp_ret_df.head())
         print('Checkpoint 3b: Created Copy...')
+        
         for col_name in exp_ret_df.columns:
-            exp_ret_df[col_name+'_t-1'] = exp_ret_df[col_name]
-            #exp_ret_df[col_name+'_t-1'].shift(1)
-
+            exp_ret_df[col_name+'_t-1'] = exp_ret_df[col_name].shift(1)
             exp_ret_df[col_name+'_r_i'] = (exp_ret_df[col_name]/exp_ret_df[col_name+'_t-1'])-1
 
-        print(exp_ret_df.head()) # WORKS
-        print('Checkpoint 3b: Created r_i DataFrames')
-
-        # THIS DOES NOT
-        __r_i_df = exp_ret_df.filter(like='r_i')
+        __r_i_df = exp_ret_df.filter(like='_r_i')
+        __r_i_df_cleaned = __r_i_df.dropna(how='all')
+        print('Checkpoint 3b: Cleaned DataFrame. Adding Weights...')
 
         num_shares_list = self.__positions_df['longQuantity'].to_list() # These are all floats
-        num_shares_array = np.array(num_shares_list, dtype=np.int64)
-
-        print("NaN values in __r_i_df:")
-        print(__r_i_df.isna().sum()) # Returns 0
-
-        print("NaN values in num_shares_list:")
-        print(pd.Series(num_shares_array).isna().sum()) # Returns 0
-
-
-        print(num_shares_array)
-        if len(num_shares_array) == len(__r_i_df.columns):
-            __wa_df = __r_i_df.mul(num_shares_array, axis=1)
-        else:
-            print('incorrect column size')
-        print(__wa_df.head())
+        num_shares_list = [float(val) for val in num_shares_list]
+        __r_i_df_weighted = __r_i_df_cleaned.mul(num_shares_list, axis=1)
+        print('Checkpoint 3b: Weights Added. Computing Average...')
         
-            
-
-        return self.__get_weighted_avg_of_positions(__r_i_df)
-    
-    def __get_weighted_avg_of_positions(self, erd: pd.DataFrame)->pd.DataFrame:
-        # Use 'longQuantity' for Number of Shares
+        sum_shares = sum(num_shares_list)
+        __r_i_df_weighted['portfolio_r_i'] = __r_i_df_weighted.sum(axis=1)/sum_shares
+        __final_ri = __r_i_df_weighted.filter(like='portfolio')
+        print('Checkpoint 3b: Created r_i DataFrame')
         
-        
-        return
+        return __final_ri
     
 
     def all_to_csv(self)->None:

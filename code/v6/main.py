@@ -19,7 +19,7 @@ redirect_uri = tda_api_configs['redirect_uri']
 token_path = tda_api_configs['token_path']
 
 end_dt = d.datetime.now() # Use as End in Portfolio params
-start_dt = end_dt - d.timedelta(days = 12) # Use as start in Portfolio params
+start_dt = end_dt - d.timedelta(days = 100) # Use as start in Portfolio params
 
 example_acct_dict = {
     'securitiesAccount':{
