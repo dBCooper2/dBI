@@ -12,8 +12,19 @@
 ####    - UPDATE: Use BIV for now instead of Bonds
 - tda-api discord used Yahoo in the past so circle back on this
 
-# TODOs: 
+# DONE: 
 - Slice DataFrames into just 1 data point from the Price History
 - Calculate Expected Returns for each equity
-- Calculate a Weighted Average of these Returns as a separate function(in case this is wrong) to merge all the positions together
+- Calculate a Weighted Average of these Returns to merge all the positions together
+    - Weighted Average is done by multiplying the expected returns by the Number of Shares, then Summing them and dividing by the total number of shares
 - Find a library to run regression on the result r_m, r_rf, and r_i DataFrame
+    - Result DataFrame is Created
+    - I have access to a DataFrame of r_i, r_rf, r_m-r_rf, and calculated betas
+        - Redo to create a list of betas from a regression model
+
+# TODOs:
+- Graphing the Results
+- Calculate Betas using Regression instead of the CAPM Formula
+- Graph those results
+- 
+

@@ -150,15 +150,16 @@ class Portfolio:
 
         print('Checkpoint 3b: Filter Price Histories into a Weighted Average of r_i...')
         __r_i_df = self.__get_portfolio_exp_return(ph_col=ph_col)
-
+        
         print('Checkpoint 3c: Assembling Final DataFrame...')
         # Final DataFrame Should be r_i, r_rf, and (r_m-r_rf)
         __r_m_minus_r_rf_df = pd.concat([__r_m_df_cleaned, __r_rf_df_cleaned], axis=1)
         __r_m_minus_r_rf_df['r_m-r_rf'] = __r_m_minus_r_rf_df['r_m']-__r_m_minus_r_rf_df['r_rf']
         
         __capm_df = pd.concat([__r_i_df, __r_rf_df_cleaned, __r_m_minus_r_rf_df['r_m-r_rf']], axis=1)
-        print(__capm_df.head())
 
+        __capm_df['beta'] = (__capm_df['r_i'] - __capm_df['r_rf']) / (__capm_df['r_m-r_rf'])
+        print(__capm_df)
         pass
 
     # 1. Perform a Moving Average on each Price History to calculate Return %'s
@@ -187,6 +188,7 @@ class Portfolio:
         sum_shares = sum(num_shares_list)
         __r_i_df_weighted['portfolio_r_i'] = __r_i_df_weighted.sum(axis=1)/sum_shares
         __final_ri = __r_i_df_weighted.filter(like='portfolio')
+        __final_ri = __final_ri.rename(columns={'portfolio_r_i' : 'r_i'})
         print('Checkpoint 3b: Created r_i DataFrame')
         
         return __final_ri
