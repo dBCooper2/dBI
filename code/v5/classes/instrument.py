@@ -1,3 +1,5 @@
+from dataclasses import dataclass #TODO
+
 class Instrument:
     def __init__(self, symbol: str, instrument_dict: dict) -> None:
         # format into {'symbol':{data:dict}}
@@ -28,4 +30,3 @@ class Instrument:
     
     def get_data(self): # Used to access the value
         return self.data
-    

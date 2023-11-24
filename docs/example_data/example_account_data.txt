@@ -4,24 +4,28 @@
 	 'roundTrips': 0,
 	 'isDayTrader': False, 
 	 'isClosingOnlyRestricted': False, 
-	 'positions': [
-		{'shortQuantity': 0.0, 
-		'averagePrice': 0.0, 
-		'currentDayCost': 0.0, 
-		'currentDayProfitLoss': 0.0, 
-		'currentDayProfitLossPercentage': 0.0, 
-		'longQuantity': 0.0, 
-		'settledLongQuantity': 0.0, 
-		'settledShortQuantity': 0.0, 
-		'instrument': {
-			'assetType': 'EQUITY', 
-			'cusip': '58933Y105', 
-			'symbol': 'MRK'
-			}, 
-		'marketValue': 0.0, 
-		'maintenanceRequirement': 0.0, 
-		'previousSessionLongQuantity': 0.0
-		}], 
+
+	 'positions': 
+	 	[
+			{'shortQuantity': 0.0, 
+			'averagePrice': 0.0, 
+			'currentDayCost': 0.0, 
+			'currentDayProfitLoss': 0.0, 
+			'currentDayProfitLossPercentage': 0.0, 
+			'longQuantity': 0.0, 
+			'settledLongQuantity': 0.0, 
+			'settledShortQuantity': 0.0, 
+			'instrument': {
+				'assetType': 'EQUITY', 
+				'cusip': '58933Y105', 
+				'symbol': 'MRK'
+				}, 
+			'marketValue': 0.0, 
+			'maintenanceRequirement': 0.0, 
+			'previousSessionLongQuantity': 0.0
+			}
+		], 
+
 		'initialBalances': {
 			'accruedInterest': 0.0, 
 			'cashAvailableForTrading': 0.0, 
