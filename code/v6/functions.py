@@ -4,7 +4,7 @@ import pandas as pd
 import json
 import os
 
-from classes.portfolio import Portfolio
+from classes.td_portfolio import TD_Portfolio
 
 
 # Accessing API:
@@ -13,7 +13,8 @@ def get_account_data(path: str)->dict: # Gets api key, account_number, redirect_
         return json.load(f) # return file contents as a json
 
 def get_output_path(path: str)->dict: # Gets a directory path to output all data to
-    return
+    with open(path) as f: # f = /path/to/folder
+        return json.load(f)
 
 # Connects to api and returns the Client object for API calls
 # ak: str = API Key
@@ -42,22 +43,4 @@ def to_pickle(output_path: str, df: pd.DataFrame)->int: #Outputs a Pickle of the
     return -1
 
 def output_to_excel(output_path: str, df: pd.DataFrame)->int: # Outputs Data and Analysis as an Excel Workbook, return an exit code
-    return -1
-
-def weighted_avg(rb: list, ns: list)->float: # rb = return or betas list, ns = list of number of shares per position
-    if len(rb) == len(ns):
-        return 1
-    return -1
-
-
-# CAPM-Specific Functions
-def filter_positions_for_capm(p_df: pd.DataFrame)->pd.DataFrame:
-    p_df = p_df[['symbol', 'cusip', 'assetType', 'longQuantity', 'marketValue', 'averagePrice', 'currentDayProfitLoss', 'currentDayProfitLossPercentage']]
-    return p_df
-
-def filter_instruments_for_capm(i_df: pd.DataFrame)->pd.DataFrame:
-    i_df = i_df[['symbol', 'cusip', 'beta']] # Add to this if needed
-    return i_df
-
-def capm(c: Client, an: str)->int: # Perform capm on a Portfolio of stocks, output the results to csv/excel, return with exit code
     return -1

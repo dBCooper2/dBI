@@ -6,8 +6,7 @@ import pandas as pd
 import datetime as d
 
 import functions as f
-import analysis as a
-from classes.portfolio import Portfolio
+from classes.td_portfolio import TD_Portfolio
 
 # Configs
 tda_api_configs = f.get_account_data('/Users/trowland/.secret/tda-api-v6.json') # Add /Users/username/.secret/path/to/api_key/file
@@ -19,7 +18,7 @@ redirect_uri = tda_api_configs['redirect_uri']
 token_path = tda_api_configs['token_path']
 
 end_dt = d.datetime.now() # Use as End in Portfolio params
-start_dt = end_dt - d.timedelta(days = 2500) # Use as start in Portfolio params
+start_dt = end_dt - d.timedelta(days = 10) # Use as start in Portfolio params
 
 example_acct_dict = {
     'securitiesAccount':{
@@ -45,13 +44,13 @@ print('Checkpoint 1 Passed.\n')
 # Checkpoint 3: Create Portfolio Object
 
 print('Checkpoint 2: Create the Portfolio...\n')
-p1 = Portfolio(client, account_number, '1d', start_dt, end_dt, output_path)
+p1 = TD_Portfolio(client, account_number, '1d', start_dt, end_dt, output_path)
 print('Checkpoint 2 Passed.\n')
 
 # Risk-Free Rate: BIV - Tracks Intermediate-Term Bonds(5-10Yrs), I can't access bonds rn so this will have to do
 # Market Rate: SPY - Tracks S&P 500 Index
 print('Checkpoint 3: Attempting to Pull CAPM Data and Process it...\n')
-p1.capm('BIV', 'SPY', 'close') # USE YAHOO FOR BONDS LATER, CHECK TDA-API DISCORD FOR MORE INFO
+capm_df = p1.capm('BIV', 'SPY', 'close') # USE YAHOO FOR BONDS LATER, CHECK TDA-API DISCORD FOR MORE INFO
 print('Checkpoint 3 Passed.\n')
 
 
@@ -59,7 +58,7 @@ print('Checkpoint 3 Passed.\n')
 #p1.all_to_pickle()
 
 # Checkpoint 4: CAPM Test
-print()
+print(capm_df)
 
 
 

@@ -6,11 +6,11 @@ import os
 import datetime as d
 
 import functions as f
-import analysis as a
+
 
 
 # TODO: Migrate get_positions(), get_instruments() and get_ph() as class functions
-class Portfolio:
+class TD_Portfolio:
     def __init__(self, c: Client, account_number: str, periods: str, start: d, end: d, output_path: str)->None:
         self.c = c
         self.account_number = account_number
@@ -22,7 +22,7 @@ class Portfolio:
 
         acct = self.__get_account()
         self.__positions_df = self.__get_positions_df(acct)
-        self.__symbols_list = self.__positions_df['symbol'].to_list()
+        self.__symbols_list = self.__positions_df.index.to_list()
         self.__instruments_df = self.__get_instruments_df(self.__symbols_list)
 
         # Create the Price Histories:
@@ -36,7 +36,9 @@ class Portfolio:
         prefixed_dfs = [df.add_prefix(id_+'_') for id_, df in df_dict.items()]
         self.__ph_df = pd.concat(prefixed_dfs, axis=1)
 
-
+#------------------------------------------------------------------------------------------------------------------------
+# API CALLS FOR DATA
+#------------------------------------------------------------------------------------------------------------------------
     def __get_account(self)->dict: # Calls API, returns as a dict, c is the tda Client and an is the account number
         return self.c.get_account(self.account_number, fields=self.c.Account.Fields.POSITIONS).json()
     
@@ -61,6 +63,7 @@ class Portfolio:
                 positions_list.append(idx)
 
         positions_df = pd.DataFrame(positions_list)
+        positions_df.set_index('symbol', inplace=True)
         # print(positions_df)
         return positions_df
     
@@ -72,9 +75,14 @@ class Portfolio:
             inst['fundamental']['cusip'] = inst['cusip']
             inst['fundamental']['description'] = inst['description']
             inst['fundamental']['assetType'] = inst['assetType']
+            for key, val in inst['fundamental'].items():
+                inst[key] = val
+            
+            del inst['fundamental']
             inst_list.append(inst)
 
-        inst_df = pd.DataFrame(inst_list)    
+        inst_df = pd.DataFrame(inst_list)
+        inst_df.set_index('symbol', inplace=True)
         # print(inst_df)
         return inst_df
     
@@ -110,8 +118,10 @@ class Portfolio:
             print('data is not a list, refactor')
             exit()
 
-
-    # CAPM: Perform CAPM
+#------------------------------------------------------------------------------------------------------------------------
+# CAPM CALCULATIONS
+#------------------------------------------------------------------------------------------------------------------------
+    # CAPM: Perform CAPM TODO: REDO TO FIND REQUIRED RETURN
     #   - Calculate Expected Return % for the Portfolio, the Risk Free Rate and the 
     # r_rf_symbol: Risk-Free Rate to gather Data on
     # r_m_symbol: Market Rate to gather data on
@@ -148,19 +158,28 @@ class Portfolio:
         __r_m_df_cleaned = __r_m_df_cleaned.rename(columns={r_m_symbol + '_r_m' : 'r_m'})
         print('Checkpoint 3a: r_m Accessed and Cleaned into 1 Column...\nCheckpoint 3a Passed.\n')
 
-        print('Checkpoint 3b: Filter Price Histories into a Weighted Average of r_i...')
-        __r_i_df = self.__get_portfolio_exp_return(ph_col=ph_col)
+        # Replace this with Calculating Weighted Beta from Instruments, then calculate required rate of return
+        print('Checkpoint 3b: Filter Instruments into a Weighted Portfolio Beta...')
+        __b_wa = self.get_weighted_betas()
         
         print('Checkpoint 3c: Assembling Final DataFrame...')
         # Final DataFrame Should be r_i, r_rf, and (r_m-r_rf)
         __r_m_minus_r_rf_df = pd.concat([__r_m_df_cleaned, __r_rf_df_cleaned], axis=1)
         __r_m_minus_r_rf_df['r_m-r_rf'] = __r_m_minus_r_rf_df['r_m']-__r_m_minus_r_rf_df['r_rf']
         
-        __capm_df = pd.concat([__r_i_df, __r_rf_df_cleaned, __r_m_minus_r_rf_df['r_m-r_rf']], axis=1)
+        __capm_df = pd.concat([__r_rf_df_cleaned, __r_m_minus_r_rf_df['r_m-r_rf']], axis=1)
 
-        __capm_df['beta'] = (__capm_df['r_i'] - __capm_df['r_rf']) / (__capm_df['r_m-r_rf'])
-        print(__capm_df)
-        pass
+        __capm_df['beta_wa'] = __b_wa
+        __capm_df['r_i'] = __capm_df['r_rf'] + __capm_df['beta_wa']*__capm_df['r_m-r_rf']
+        #print(__capm_df.head())
+
+        comparison_df = self.__get_portfolio_exp_return(ph_col)
+
+        __capm_df = pd.concat([__capm_df, comparison_df], axis=1)
+
+        __capm_df['is_r_i_<_r_exp'] = __capm_df['r_i'] < comparison_df['r_exp']
+
+        return __capm_df
 
     # 1. Perform a Moving Average on each Price History to calculate Return %'s
     # 2. add each % to a column and perform a weighted Average on each row
@@ -174,26 +193,42 @@ class Portfolio:
         
         for col_name in exp_ret_df.columns:
             exp_ret_df[col_name+'_t-1'] = exp_ret_df[col_name].shift(1)
-            exp_ret_df[col_name+'_r_i'] = (exp_ret_df[col_name]/exp_ret_df[col_name+'_t-1'])-1
+            exp_ret_df[col_name+'_r_exp'] = (exp_ret_df[col_name] / exp_ret_df[col_name+'_t-1'])-1
 
-        __r_i_df = exp_ret_df.filter(like='_r_i')
-        __r_i_df_cleaned = __r_i_df.dropna(how='all')
+        __r_exp_df = exp_ret_df.filter(like='_r_exp')
+        __r_exp_df_cleaned = __r_exp_df.dropna(how='all')
         print('Checkpoint 3b: Cleaned DataFrame. Adding Weights...')
 
         num_shares_list = self.__positions_df['longQuantity'].to_list() # These are all floats
         num_shares_list = [float(val) for val in num_shares_list]
-        __r_i_df_weighted = __r_i_df_cleaned.mul(num_shares_list, axis=1)
+        __r_exp_df_weighted = __r_exp_df_cleaned.mul(num_shares_list, axis=1)
         print('Checkpoint 3b: Weights Added. Computing Average...')
         
         sum_shares = sum(num_shares_list)
-        __r_i_df_weighted['portfolio_r_i'] = __r_i_df_weighted.sum(axis=1)/sum_shares
-        __final_ri = __r_i_df_weighted.filter(like='portfolio')
-        __final_ri = __final_ri.rename(columns={'portfolio_r_i' : 'r_i'})
+        __r_exp_df_weighted['portfolio_r_exp'] = __r_exp_df_weighted.sum(axis=1) / sum_shares
+        __final_rexp = __r_exp_df_weighted.filter(like='portfolio')
+        __final_rexp = __final_rexp.rename(columns={'portfolio_r_exp' : 'r_exp'})
         print('Checkpoint 3b: Created r_i DataFrame')
         
-        return __final_ri
+        return __final_rexp
+
+
+    def get_weighted_betas(self)->np.float64:
+        print(self.__instruments_df.head())
+        print(self.__instruments_df['beta'].head())
+        print(self.__positions_df['longQuantity'].head())
+        df = pd.concat([self.__instruments_df['beta'], self.__positions_df['longQuantity']], axis=1)
+        print(df.head())
+        df['weighted_beta'] = df['beta'] * df['longQuantity']
+
+        weighted_avg_betas = (np.float64) (df['weighted_beta'].sum() / df['longQuantity'].sum())
+        
+        return weighted_avg_betas
     
 
+#------------------------------------------------------------------------------------------------------------------------
+# EXPORTING TO FILES:
+#------------------------------------------------------------------------------------------------------------------------
     def all_to_csv(self)->None:
         os.makedirs(self.output_path, exist_ok=True)
 
@@ -217,6 +252,5 @@ class Portfolio:
 
     def all_to_excel(self):
         pass
-
 
 

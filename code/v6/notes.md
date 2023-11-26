@@ -4,6 +4,11 @@
 # Classes should only contain the attrs, no api calls from within
 # Excel Files are named 'portfolio-MM-DD-YYYY
 
+# USE CASE:
+- Calculates CAPM to see if you are beating the market
+    - if portfolio is doing well then visualize how much better you are doing
+    - if portfolio is doing worse, optimize the portfolio to maximize expected return
+
 # Do I need classes?
 - Do everything in DataFrames and Portfolio, skip nested Position, Instrument and Price History Classes
 - Pickle Everything that stays inside of Python
@@ -28,3 +33,38 @@
 - Graph those results
 - 
 
+
+# Data needed for Instruments to perform CAPM:
+
+### r_avg = SUM(r_i)/N -- DONE
+- r_avg: average(expected) return rate -> A Weighted Average of Position Data Expected Returns, which were found with a Moving Average 
+- r_i: expected return at index i -> This is found using the Weighted Average
+- N: # of terms(indices) -> Found with the Quantity of Shares using Position Data
+
+### rho = root(sum(r_i-r_avg)^2/N-1) -- TODO
+- rho: standard deviation
+
+### CV = rho/r_avg -- TODO
+
+### Weighted Average of... -- TODO
+- Expected/Average Return -> Done
+- Beta -> Todo, Use Instrument Data
+
+### r_i = r_rf+B*(r_m-r_rf) -> DONE
+- r_i: required return 
+- r_rf: risk-free rate of return -> Calculated in Portfolio.capm() using ETF's that track the bond market
+- B: Beta(weighted avg of portfolio betas) - > TODO: Pulled from Instrument Data
+- r_m: return % on the market
+
+- create rm - rf in 
+
+## V6 Current Functionality:
+- Pulling API Data
+- calculating a moving average of each column in the price history
+
+## CAPM is REGRESSION
+return - rrf = 
+
+store flat files in the database without transferring values
+
+graph betas at different periods as a time series
