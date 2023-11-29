@@ -84,26 +84,27 @@ class AbstractPortfolio(ABC):
     @abstractmethod
     def capm(self):
         # Calculate Expected Returns for _c_phdf(these are r_m and r_rf), then create columns Concatenate __c_phdf to __s_phdf horizontally and 
+        
         print('Checkpoint 3a: Can we call the API for r_m and r_rf values...')
-        df = pd.DataFrame()
+        
+        # Get Risk-Free Rate
         __r_rf_df = self.get_price_history_df(self.r_rf_symbol)
         __r_rf_df = __r_rf_df.filter(like=self.ph_col) #filter everything except the column we want to check
+        __r_rf_df = __r_rf_df.add_prefix(self.r_rf_symbol+'_') # col_names are <stock_name>_<open/close/high/low/volume>
 
-        __r_rf_df = __r_rf_df.add_prefix(self.r_rf_symbol+'_')
         # Calculate r_rf Moving Average
         __r_rf_df[self.r_rf_symbol + '_' + self.ph_col + '_t-1'] = __r_rf_df[self.r_rf_symbol + '_' + self.ph_col].shift(1)
         __r_rf_df[self.r_rf_symbol + '_r_rf'] = (__r_rf_df[self.r_rf_symbol + '_' + self.ph_col]/__r_rf_df[self.r_rf_symbol + '_' + self.ph_col + '_t-1'])-1
-
         __r_rf_df = __r_rf_df.filter(like='r_rf')
 
-        __r_rf_df_cleaned = __r_rf_df.dropna(how='all')
+        __r_rf_df_cleaned = __r_rf_df.dropna(how='all') # drop NaN Values
         __r_rf_df_cleaned = __r_rf_df_cleaned.rename(columns={self.r_rf_symbol + '_r_rf' : 'r_rf'})
-        print('Checkpoint 3a: r_rf Accessed and Cleaned into 1 Column...')
+        #print('Checkpoint 3a: r_rf Accessed and Cleaned into 1 Column...')
 
         __r_m_df = self.get_price_history_df(self.r_m_symbol)
         __r_m_df = __r_m_df.filter(like=self.ph_col)
-
         __r_m_df = __r_m_df.add_prefix(self.r_m_symbol+'_')
+
         # Calculate r_m Moving Average
         __r_m_df[self.r_m_symbol + '_' + self.ph_col + '_t-1'] = __r_m_df[self.r_m_symbol + '_' + self.ph_col].shift(1)
         __r_m_df[self.r_m_symbol + '_r_m'] = (__r_m_df[self.r_m_symbol + '_' + self.ph_col]/__r_m_df[self.r_m_symbol + '_' + self.ph_col + '_t-1'])-1
@@ -112,13 +113,13 @@ class AbstractPortfolio(ABC):
 
         __r_m_df_cleaned = __r_m_df.dropna(how='all')
         __r_m_df_cleaned = __r_m_df_cleaned.rename(columns={self.r_m_symbol + '_r_m' : 'r_m'})
-        print('Checkpoint 3a: r_m Accessed and Cleaned into 1 Column...\nCheckpoint 3a Passed.\n')
 
-        # Replace this with Calculating Weighted Beta from Instruments, then calculate required rate of return
-        print('Checkpoint 3b: Filter Instruments into a Weighted Portfolio Beta...')
-        __b_wa = self.__get_weighted_betas()
+        #print('Checkpoint 3a: r_m Accessed and Cleaned into 1 Column...\nCheckpoint 3a Passed.\n')
+        #print('Checkpoint 3b: Filter Instruments into a Weighted Portfolio Beta...')
+
+        __b_wa = self.__get_weighted_beta() # Create the Portfolio Beta, returns a float representing the weighted average of a beta
         
-        print('Checkpoint 3c: Assembling Final DataFrame...')
+        #print('Checkpoint 3c: Assembling Final DataFrame...')
         # Final DataFrame Should be r_i, r_rf, and (r_m-r_rf)
         __r_m_minus_r_rf_df = pd.concat([__r_m_df_cleaned, __r_rf_df_cleaned], axis=1)
         __r_m_minus_r_rf_df['r_m-r_rf'] = __r_m_minus_r_rf_df['r_m']-__r_m_minus_r_rf_df['r_rf']
@@ -133,7 +134,7 @@ class AbstractPortfolio(ABC):
 
         __capm_df = pd.concat([__capm_df, comparison_df], axis=1)
 
-        __capm_df['is_r_i_<_r_exp'] = __capm_df['r_i'] < comparison_df['r_exp']
+        __capm_df['is_r_exp_>_r_i'] = comparison_df['r_exp'] > __capm_df['r_i']
 
         return __capm_df
 
@@ -145,7 +146,7 @@ class AbstractPortfolio(ABC):
         #print(exp_ret_df.head())
         exp_ret_df = exp_ret_df.filter(like=self.ph_col)
         #print(exp_ret_df.head())
-        print('Checkpoint 3b: Created Copy...')
+        #print('Checkpoint 3b: Created Copy...')
         
         for col_name in exp_ret_df.columns:
             exp_ret_df[col_name+'_t-1'] = exp_ret_df[col_name].shift(1)
@@ -153,27 +154,27 @@ class AbstractPortfolio(ABC):
 
         __r_exp_df = exp_ret_df.filter(like='_r_exp')
         __r_exp_df_cleaned = __r_exp_df.dropna(how='all')
-        print('Checkpoint 3b: Cleaned DataFrame. Adding Weights...')
+        #print('Checkpoint 3b: Cleaned DataFrame. Adding Weights...')
 
         num_shares_list = self._positions_df['longQuantity'].to_list() # These are all floats
         num_shares_list = [float(val) for val in num_shares_list]
         __r_exp_df_weighted = __r_exp_df_cleaned.mul(num_shares_list, axis=1)
-        print('Checkpoint 3b: Weights Added. Computing Average...')
+        #print('Checkpoint 3b: Weights Added. Computing Average...')
         
         sum_shares = sum(num_shares_list)
         __r_exp_df_weighted['portfolio_r_exp'] = __r_exp_df_weighted.sum(axis=1) / sum_shares
         __final_rexp = __r_exp_df_weighted.filter(like='portfolio')
         __final_rexp = __final_rexp.rename(columns={'portfolio_r_exp' : 'r_exp'})
-        print('Checkpoint 3b: Created r_i DataFrame')
+        #print('Checkpoint 3b: Created r_i DataFrame')
         
         return __final_rexp
 
 
-    def __get_weighted_betas(self)->np.float64:
+    def __get_weighted_beta(self)->np.float64:
         df = pd.concat([self._instruments_df['beta'], self._positions_df['longQuantity']], axis=1)
         df['weighted_beta'] = df['beta'] * df['longQuantity']
-        weighted_avg_betas = (np.float64) (df['weighted_beta'].sum() / df['longQuantity'].sum()) # This is a weighted Portfolio Beta that goes into every row of the beta column
-        return weighted_avg_betas
+        weighted_avg_of_betas = (np.float64) (df['weighted_beta'].sum() / df['longQuantity'].sum()) # This is a weighted Portfolio Beta that goes into every row of the beta column
+        return weighted_avg_of_betas
 
 #------------------------------------------------------------------------------------------------------------------------
 # EXPORTING TO FILES:

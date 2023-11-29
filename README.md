@@ -3,33 +3,37 @@
 ### Note: This Project is NOT FINISHED
 The project is just a collection of functions and classes for now. This will be deleted and a release will be created when the project is finished.
 
-### Completed Features:
-- The program can access the TDAmeritrade API, and collects an Account from the API or from User Input. This is then used to create a Portfolio object, capturing the positions in the portfolio and their related performance data, as well as Historical Price data from a list of periods specified by the user, and Fundamental data like Betas, Dividend Yields and related ratios.
-- The program can export the data into either an Excel Workbook with Positions Data, Instrument Data, and each Historical Data Table as separate, labeled worksheets, as well as a folder of CSV or Pickle files
-- The Program can perform CAPM analysis on a Portfolio of Stocks, calculating the Expected Return of the entire portfolio, the Risk-Free Rate(For now I am using symbol BIV for bonds), and the Market Rate(For now I am using symbol SPY), and then calculates a Beta for the model for that day.
-
-### In Progress:
-- The program will need a persistent database to export the files into other software smoothly, check out the 'db' branch for the progress on that.
-- The program will contain a GUI element for users forking the file that will contain instructions and steps to create a TD Developer account and the information required for the program to run. This is a contribution by @slizzed(https://github.com/slizzed) to improve his python skills.
-
-### Planned:
-- The program will calculate a moving average, linear regression and an exponential smoothing model on the Historical Data to determine the expected returns of each stock.
-- These moving averages will be combined with any other necessary data to perform Portfolio Analysis on a Portfolio either pulled from a TDA Account or added via User Input
-- Linear Optimization will be added to Portfolios to maximize a given data point(maximize dividend, maximize expected return, minimize portfolio beta, etc.)
-- These graphs will be plotted either through a tableau dashboard or a built-in Python plotting Library.
-
 ## About
 I started this project to apply the skills I have learned while studying at TTU to a real-life project. The goal of the dBI repository is to take API data from TD Ameritrade using Alex Golec's tda-api wrapper and my own python code to analyze the data using Python, and export it into several formats. When I started this project I had little experience with Pandas, Tableau and using Python with Excel, so this project will integrate all three of these technologies into the project. dBI will be able to...
-- Take historical data of a stock and compute expected returns using Linear Regression, Moving Averages and Exponential Smoothing
-- Perform Portfolio Analysis on a TD Ameritrade customer's portfolio to Calculate the Expected Return of the portfolio
-- Perform Analysis on Individual Stocks or on a customer portfolio by accessing Historical Price and Instrument Data.
-- Export the Data collected from the TD Ameritrade API and processed by the program into CSV and Excel Workbook Formats(And possibly SQL or SQLite in the Future)
-- Export the data into Tableau to find insights and present the data visually
+- Access TD Ameritrade's API to view portfolio performance
+- Compute expected returns for a stock using moving averages and regression
+- Calculate portfolio performance using CAPM and other methods that are to be determined to improve the portfolio's performance.
+- Visualize current and projected stock/portfolio performance through Python Libraries and Tableau
+- Be callable via Tableau to generate data for dashboards
+- Stash Excel/CSV/Pickle Files in a Database, and eventually store the raw values(I am currently doing a database project in school to learn this)
+
+### Completed Features:
+- The Program creates a Portfolio Object based on either a TD Ameritrade API Client Object via tda-api or a provided dictionary(And CSV/pkl files in the future). This Portfolio is represented by the Abstract Base Class AbstractPortfolio, which is extended by TD_Portfolio for handling the TD Account's Portfolio, and Test_Portfolio to handle test dictionaries and portfolios from CSV/pkl files.
+- Portfolios contain individual DataFrames of the Positions in an account and their relevant data, along with an Instrument DataFrame, which contains fundamental data like the beta of each position and ratios like the PE ratio. Both of these DataFrames use the Stock's symbol as an index and the data points are columns. Lastly, Portfolios contain a DataFrame of Historical Data of each stock, using an index of the date the data was recorded in the TD API with each Stock's open, close, high and low price along with the volume of shares traded. These are labeled {symbol}_open/close/etc., with each being a separate column.
+- Portfolios can perform a CAPM Analysis of the Portfolio. This entails calling a stock symbol to represent the bond market for the risk-free rate, and a symbol that tracks the S&P 500 for the market rate. Then, the Portfolio accesses each Beta from the Instruments DataFrame and the quantity of each stock in the Positions DataFrame(represented by 'longQuantity') and computes a weighted average of the Betas to create a Portfolio Beta. Then the Portfolio calculates a 1-day moving average of the stock's historical data to compute an expected return. Finally, these values are added to their own DataFrame and calculate the required rate of return using the CAPM Formula(Required Rate of Return = Risk-Free Rate + Beta * (Market Rate - Risk-Free Rate)), then these values are compared to the expected returns to see if the expected return is greater than the required return
+- Portfolios can be exported to both CSV and Pickle(pkl) files provided an output path to save the files to.
+
+### In Progress:
+- The program will contain a GUI element for users forking the file that will contain instructions and steps to create a TD Developer account and the information required for the program to run. This is a contribution by @slizzed(https://github.com/slizzed) to improve his python skills.
+- The CAPM function is a little crude right now and will be improved. A second capital asset pricing model will be created to use the formula:
+(r_it - r_ft) = a_i + B_i * (r_mt - r_ft) + e_it
+to better model r_it, the return of the asset.
+
+### Planned:
+- Result Data from Time Series Analysis will be graphed using MatplotLib
+- Linear Optimization will be added to Portfolios to maximize a given data point(maximize dividend, maximize expected return, minimize portfolio beta, etc.)
+
 
 ## Installation and Running the Program
-This will be added in the future, if this repo gets attention I will write a guide to set up the project and run it right now, but currently it is not available as an executable. When the project is finished I will make it a downloadable and executable program.
+TODO
 
 ## How to Use
+TODO
 
 ## Credits:
 None of this would be possible without Alex Golec(https://github.com/alexgolec) and the team behind the tda-api. You can find the project here: https://github.com/alexgolec/tda-api and at https://tda-api.readthedocs.io
