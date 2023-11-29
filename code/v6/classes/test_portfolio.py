@@ -20,6 +20,7 @@ class TestPortfolio(AbstractPortfolio):
         df_dict = dict(zip(self._symbols_list, dfs))
         prefixed_dfs = [df.add_prefix(id_+'_') for id_, df in df_dict.items()]
         self._ph_df = pd.concat(prefixed_dfs, axis=1)
+        self.capm_df = None
 
     
 #------------------------------------------------------------------------------------------------------------------------
@@ -94,6 +95,8 @@ class TestPortfolio(AbstractPortfolio):
         __capm_df = pd.concat([__capm_df, comparison_df], axis=1)
 
         __capm_df['is_r_exp_>_r_i'] = comparison_df['r_exp'] > __capm_df['r_i']
+        
+        self.capm_df = __capm_df
 
         return __capm_df
 

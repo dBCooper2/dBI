@@ -33,15 +33,7 @@ class LineGraph:
 class Histogram:
     pass
 
-
 # TODO
 @dataclass
 class ScatterPlot:
-    xlabel: str
-    ylabel: str
-    title: str
-    xdata: list
-    ydata: list
-
-    def output_plot(self):
-        plt.scatter(self.xdata, self.ydata)
+    pass

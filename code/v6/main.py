@@ -26,7 +26,7 @@ redirect_uri = tda_api_configs['redirect_uri']
 token_path = tda_api_configs['token_path']
 
 end_dt = d.datetime.now() # Use as End in Portfolio params
-start_dt = end_dt - d.timedelta(days = 64) # Use as start in Portfolio params
+start_dt = end_dt - d.timedelta(days = 2500) # Use as start in Portfolio params
 
 example_acct_dict = {
     'data':
@@ -56,11 +56,11 @@ print('Checkpoint 2 Passed.\n')
 print('Checkpoint 4: Attempting to Pull CAPM Data and Process it...\n')
 td_capm_df = p1.capm() # USE YAHOO FOR BONDS LATER, CHECK TDA-API DISCORD FOR MORE INFO
 print('TD CAPM DF Created')
-print(td_capm_df)
+#print(td_capm_df)
 
 test_capm_df = p2.capm()
 print('Test CAPM DF Created')
-print(test_capm_df)
+#print(test_capm_df)
 print()
 print('Checkpoint 4 Passed.\n')
 
@@ -75,3 +75,11 @@ names = p1._positions_df.index.to_list()
 
 pc = PieChart(qty, names)
 pc.output_plot()
+
+exp_ret = td_capm_df['r_exp'].to_list()
+t = td_capm_df.index.to_list()
+title = 'Portfolio Expected Return over Time'
+xlabel = 'DateTime'
+ylabel = 'Return Rate (%)'
+lg = LineGraph(xlabel, ylabel, title, t, exp_ret)
+lg.output_plot()
