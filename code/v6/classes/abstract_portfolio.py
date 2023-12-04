@@ -18,6 +18,7 @@ class AbstractPortfolio(ABC):
         self.r_m_symbol = r_m_symbol
         self.ph_col = ph_col
 
+        self._symbols_list = []
         self._positions_df = pd.DataFrame()
         self._instruments_df = pd.DataFrame()
         self._ph_df = pd.DataFrame()
@@ -181,13 +182,14 @@ class AbstractPortfolio(ABC):
 #------------------------------------------------------------------------------------------------------------------------
     @abstractmethod
     def all_to_csv(self)->None:
-        os.makedirs(self.output_path, exist_ok=True)
+        fpath = self.output_path + '/csv/'
+        os.makedirs(path, exist_ok=True)
 
-        self._positions_df.to_csv(os.path.join(self.output_path, 'Positions.csv'))
-        self._instruments_df.to_csv(os.path.join(self.output_path, 'Instruments.csv'))
-        self._ph_df.to_csv(os.path.join(self.output_path, 'All_Positions.csv'))
+        self._positions_df.to_csv(os.path.join(fpath, 'Positions.csv'))
+        self._instruments_df.to_csv(os.path.join(fpath, 'Instruments.csv'))
+        self._ph_df.to_csv(os.path.join(fpath, 'All_Positions.csv'))
     
-        iscd = self.output_path + '/Positions' # icsd = Individual Stock CSV Directory
+        iscd = fpath + '/individual_price_histories/' # icsd = Individual Stock CSV Directory
         os.makedirs(iscd, exist_ok=True)
         for s in self._symbols_list:
             df = self._ph_df.filter(like=s)
@@ -196,11 +198,20 @@ class AbstractPortfolio(ABC):
     
     @abstractmethod
     def all_to_pickle(self):
-        path = self.output_path + '/pickles'
-        self._positions_df.to_pickle(path+'/positions.pkl')
-        self._instruments_df.to_pickle(path+'/instruments.pkl')
-        self._ph_df.to_pickle(path+'all_ph.pkl')
+        fpath = self.output_path + '/pickles/'
+        os.makedirs(fpath, exist_ok=True)
+        self._positions_df.to_pickle(fpath+'/positions.pkl')
+        self._instruments_df.to_pickle(fpath+'/instruments.pkl')
+        self._ph_df.to_pickle(fpath+'all_ph.pkl')
 
     @abstractmethod
     def all_to_excel(self):
-        pass
+        fpath = self.output_path + '/xlsx/'
+        os.makedirs(fpath, exist_ok=True)
+        with pd.ExcelWriter(fpath+'portfolio.xlsx') as writer:
+            # Write each DataFrame to a different sheet
+            self._positions_df.to_excel(writer, sheet_name='positions', index=False)
+            self._instruments_df.to_excel(writer, sheet_name='instruments', index=False)
+
+            for s in self._symbols_list:
+                self._ph_df.filter(like=s).to_excel(writer, sheet_name=s, index=False)

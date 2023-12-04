@@ -4,6 +4,7 @@
 from tda.client import Client
 import pandas as pd
 import datetime as d
+import matplotlib.pyplot as plt
 
 import functions as f
 from classes.td_portfolio import TD_Portfolio
@@ -26,7 +27,7 @@ redirect_uri = tda_api_configs['redirect_uri']
 token_path = tda_api_configs['token_path']
 
 end_dt = d.datetime.now() # Use as End in Portfolio params
-start_dt = end_dt - d.timedelta(days = 2500) # Use as start in Portfolio params
+start_dt = end_dt - d.timedelta(days = 365) # Use as start in Portfolio params
 
 example_acct_dict = {
     'data':
@@ -34,6 +35,9 @@ example_acct_dict = {
         {'symbol':'TM', 'assetType':'EQUITY', 'averagePrice':117.94, 'longQuantity':5.0},
         {'symbol':'UPS', 'assetType':'EQUITY', 'averagePrice': 101.49,'longQuantity': 5.0},
         {'symbol':'FDX', 'assetType':'EQUITY', 'averagePrice':188.77, 'longQuantity':5.0},
+        {'symbol':'AMD', 'assetType':'EQUITY', 'averagePrice':150.50, 'longQuantity':5.0},
+        {'symbol':'NVDA', 'assetType':'EQUITY', 'averagePrice':400.00, 'longQuantity':5.0},
+        {'symbol':'AAPL', 'assetType':'EQUITY', 'averagePrice':200.00, 'longQuantity':5.0},
     ]}
 
 # Checkpoint 2: Connect to API
@@ -66,20 +70,26 @@ print('Checkpoint 4 Passed.\n')
 
 p1.all_to_csv()
 p2.all_to_csv()
-#p1.all_to_pickle()
-#p2.all_to_pickle()
+p1.all_to_pickle()
+p2.all_to_pickle()
+p1.all_to_excel()
+p2.all_to_excel()
 
 # Checkpoint 5: Create Graphs
-qty = p1._positions_df['longQuantity'].to_list()
-names = p1._positions_df.index.to_list()
+# Pie Chart:
+
+qty = p2._positions_df['longQuantity'].to_list()
+names = p2._positions_df.index.to_list()
 
 pc = PieChart(qty, names)
 pc.output_plot()
 
-exp_ret = td_capm_df['r_exp'].to_list()
-t = td_capm_df.index.to_list()
-title = 'Portfolio Expected Return over Time'
+# LineGraph
+exp_ret = (test_capm_df['r_exp']*100).to_list()
+t = test_capm_df.index.to_list()
+title = 'YTD Expected Return'
 xlabel = 'DateTime'
 ylabel = 'Return Rate (%)'
 lg = LineGraph(xlabel, ylabel, title, t, exp_ret)
 lg.output_plot()
+

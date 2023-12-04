@@ -10,6 +10,7 @@ class PieChart:
     pass
     
     def output_plot(self):
+        plt.style.use('Solarize_Light2')
         plt.pie(self.data, labels=self.labels)
         plt.show()
 
@@ -23,11 +24,13 @@ class LineGraph:
     ydata: list
 
     def output_plot(self):
+        plt.style.use('Solarize_Light2')
         plt.plot(self.xdata, self.ydata)
         plt.title(self.title)
         plt.xlabel(self.xlabel)
         plt.ylabel(self.ylabel)
         plt.show()
+
 # TODO
 @dataclass
 class Histogram:

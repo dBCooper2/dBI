@@ -28,19 +28,3 @@ def connect_to_api(ak: str, ru: str, tp: str)->Client:
         with webdriver.Chrome() as driver:
             c = a.client_from_login_flow(driver, ak, ru, tp)
     return c
-
-
-# Output to Files
-def to_csv(output_path: str, filename: str, df: pd.DataFrame)->int: # Outputs Data and Analysis as CSV files, return an exit code to make sure the data exported properly
-    try:
-        os.makedirs(output_path, exist_ok=True)
-        df.to_csv(os.path.join(output_path, filename))
-        return 1
-    except:
-        return -1
-
-def to_pickle(output_path: str, df: pd.DataFrame)->int: #Outputs a Pickle of the data, only use within your python code!
-    return -1
-
-def output_to_excel(output_path: str, df: pd.DataFrame)->int: # Outputs Data and Analysis as an Excel Workbook, return an exit code
-    return -1
