@@ -1,20 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import mplfinance as mpf
 from dataclasses import dataclass
 
-# TODO
-@dataclass
+
+# TODO: Implement Saving to File & Style Features
 class PieChart:
-    data: list
-    labels: list
-    pass
-    
+    def __init__(self, data: list, labels: list, style: str):
+        self.data = data
+        self.labels = labels
+        self.style = style
+        self.set_style()
+
+    def set_style(self):
+        plt.style.use(self.style)
+
     def output_plot(self):
-        plt.style.use('Solarize_Light2')
         plt.pie(self.data, labels=self.labels)
         plt.show()
 
-# TODO
+# TODO: REDO WITH MPLFINANCE
 @dataclass
 class LineGraph:
     xlabel: str

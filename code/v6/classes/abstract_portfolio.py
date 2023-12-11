@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import os
 
+from classes.price_history import PriceHistory
+
 
 class AbstractPortfolio(ABC):
     @abstractmethod
@@ -183,13 +185,13 @@ class AbstractPortfolio(ABC):
     @abstractmethod
     def all_to_csv(self)->None:
         fpath = self.output_path + '/csv/'
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(fpath, exist_ok=True)
 
         self._positions_df.to_csv(os.path.join(fpath, 'Positions.csv'))
         self._instruments_df.to_csv(os.path.join(fpath, 'Instruments.csv'))
         self._ph_df.to_csv(os.path.join(fpath, 'All_Positions.csv'))
     
-        iscd = fpath + '/individual_price_histories/' # icsd = Individual Stock CSV Directory
+        iscd = fpath + '/price_histories/' # icsd = Individual Stock CSV Directory
         os.makedirs(iscd, exist_ok=True)
         for s in self._symbols_list:
             df = self._ph_df.filter(like=s)
@@ -200,14 +202,26 @@ class AbstractPortfolio(ABC):
     def all_to_pickle(self):
         fpath = self.output_path + '/pickles/'
         os.makedirs(fpath, exist_ok=True)
+
         self._positions_df.to_pickle(fpath+'/positions.pkl')
         self._instruments_df.to_pickle(fpath+'/instruments.pkl')
-        self._ph_df.to_pickle(fpath+'all_ph.pkl')
+
+        iscp = fpath + '/price_histories/' # iscd = individual stock data pickles
+        for s in self._symbols_list:
+            ssd = self._ph_df.filter(like=s) # ssd = single stock data
+
+            # remove the prefix 'name_'
+            new_names = [col.replace(f'{s}_', '') for col in ssd.columns] # Copies the column names into a new array without the prefix
+            ssd.rename(columns=dict(zip(ssd.columns, new_names)), inplace=True) # renames all the columns with the new names
+            ssd['symbol'] = s # add a column with the stock's symbol
+
+            ssd.to_pickle(iscp+f'{s}.pkl')
 
     @abstractmethod
     def all_to_excel(self):
         fpath = self.output_path + '/xlsx/'
         os.makedirs(fpath, exist_ok=True)
+
         with pd.ExcelWriter(fpath+'portfolio.xlsx') as writer:
             # Write each DataFrame to a different sheet
             self._positions_df.to_excel(writer, sheet_name='positions', index=False)

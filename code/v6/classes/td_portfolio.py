@@ -7,6 +7,7 @@ import datetime as d
 
 import functions as f
 from classes.abstract_portfolio import AbstractPortfolio
+from classes.price_history import PriceHistory
 
 
 
@@ -25,7 +26,7 @@ class TD_Portfolio(AbstractPortfolio):
         # put it all in 1 df, horizontally concat
         dfs = []
         for symbol in self._symbols_list:
-            ph_df = self.get_price_history_df(symbol)
+            ph_df = PriceHistory(self.c, symbol, self.periods, self.start, self.end).candles
             dfs.append(ph_df)
 
         df_dict = dict(zip(self._symbols_list, dfs))

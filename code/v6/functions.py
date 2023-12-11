@@ -4,8 +4,6 @@ import pandas as pd
 import json
 import os
 
-from classes.td_portfolio import TD_Portfolio
-
 
 # Accessing API:
 def get_account_data(path: str)->dict: # Gets api key, account_number, redirect_uri, and token path and returns them as a dict from a specified filename and path
