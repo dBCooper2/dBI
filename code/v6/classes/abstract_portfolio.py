@@ -29,7 +29,8 @@ class AbstractPortfolio(ABC):
     def get_instruments_df(self)->pd.DataFrame: # Calls API and returns a DataFrame of all fundamental data
         inst_list = []
         for s in self._symbols_list:
-            inst = self.c.search_instruments(s, self.c.Instrument.Projection('fundamental')).json()[s]
+            inst = self.c.search_instruments(s, self.c.Instrument.Projection('fundamental')).json()
+            inst = inst[s]
             inst['fundamental']['cusip'] = inst['cusip']
             inst['fundamental']['description'] = inst['description']
             inst['fundamental']['assetType'] = inst['assetType']

@@ -24,8 +24,10 @@ SQlite:
             - If this fails, refactor to use MySQL
 
 MPLFinance Todos:
-    - Learn how to interpret candle charts
+    - Learn how to interpret candle charts - Done, strengthen your understanding with application now
+    - Learn how to interpret Renko/PNF Charts
     - Look at their tutorials
     - Add Volume to candle charts
     - Add Moving Averages to candle charts(built-in function in MPF)
+    - Write in-class functions to graph Portfolio Candles alongside Individual Stock Candles
 

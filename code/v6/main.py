@@ -26,7 +26,9 @@ redirect_uri = tda_api_configs['redirect_uri']
 token_path = tda_api_configs['token_path']
 
 end_dt = d.datetime.now() # Use as End in Portfolio params
-start_dt = end_dt - d.timedelta(days = 365) # Use as start in Portfolio params
+start_dt = end_dt - d.timedelta(days = 28) # Use as start in Portfolio params
+
+mpl_chart_style = 'Solarize_Light2'
 
 example_acct_dict = {
     'data':
@@ -101,7 +103,7 @@ ph_amd_1d = PriceHistory(client, 'AMD', '1d', start_dt, end_dt)
 ph_amd_1wk = PriceHistory(client, 'AMD', '1w', start_dt, end_dt)
 
 
-#mpf.plot(ph_amd_1wk.candles, type='candle')
-#mpf.plot(ph_amd_1wk.candles, type='renko')
-#mpf.plot(ph_amd_1wk.candles, type='pnf')
+mpf.plot(ph_amd_1d.candles, type='candle')
+mpf.plot(ph_amd_1d.candles, type='renko')
+mpf.plot(ph_amd_1d.candles, type='pnf')
 
