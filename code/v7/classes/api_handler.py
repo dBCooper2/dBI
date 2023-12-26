@@ -5,7 +5,7 @@ import pandas as pd
 import datetime as dt
 
 class APIHandler:
-    def __init__(self, key_path: str, headers_path: str, out_path: str)->None: # Collect keys and tokens for API calls
+    def __init__(self, key_path: str, out_path: str)->None: # Collect keys and tokens for API calls
         self.ak = None
         self.ru = None
         self.tp = None
@@ -13,13 +13,11 @@ class APIHandler:
 
         try:
             with open(key_path) as f:
-                self.ak = json.load(f)['api_key'] # API KEY
-
-            with open(headers_path) as f:
                 login_dict = json.load(f)
-            self.ru = login_dict['redirect_uri'] # REDIRECT URI
-            self.tp = login_dict['token_path'] # TOKEN PATH
-            self.an = login_dict['acct_num'] # ACCOUNT NUMBER
+                self.ak = login_dict['api_key'] # API KEY
+                self.ru = login_dict['redirect_uri'] # REDIRECT URI
+                self.tp = login_dict['token_path'] # TOKEN PATH
+                self.an = login_dict['account_number'] # ACCOUNT NUMBER
 
         except FileNotFoundError:
             print('Program could not locate your API Key Data!')
@@ -34,7 +32,7 @@ class APIHandler:
     # API Responds with an Account JSON, containing Positions, Balances and other Account-Specific Data. Returns a dictionary to be sorted by other functions
     def get_account_with_positions(self)->dict:
         acct = self.c.get_account(self.an, fields=self.c.Account.Fields.POSITIONS).json()
-        return acct
+        return acct # returns the raw account dictionary
     
     # Filter the Dictionary to Return just the List of Positions
     def get_position_symbols(self, acct: dict)->list:
@@ -45,21 +43,21 @@ class APIHandler:
             else: 
                 positions_symbols.append(idx['instrument']['symbol'])
         
-        return positions_symbols
+        return positions_symbols # returns a list of each symbol except mmda1, represented by strings
 
 
     
     # Creates a dataframe with the Stock Symbol as the index, with the date the api was accessed(calls datetime.today())
     def get_position_df(self, acct)->pd.DataFrame:
-        if isinstance(idx, dict) == False:
-                print(idx)
-                print('idx is not a dictionary! It must be an index')
+        if isinstance(acct, dict) == False:
+                print(acct)
+                print('acct is not a list!! It must be an index')
                 exit()
 
         positions_list = []
-        date_accessed = dt.today()
+        date_accessed = dt.datetime.now()
 
-        for idx in acct:
+        for idx in acct['securitiesAccount']['positions']:
             if idx['instrument']['symbol'] == 'MMDA1':
                 continue
             else: 
@@ -74,7 +72,7 @@ class APIHandler:
         positions_df.set_index('symbol', inplace=True)
         positions_df['date_accessed'] = date_accessed
 
-        return positions_df
+        return positions_df # Print the positions dataframe like in v6
 
 
     # Accesses the API to get fundamental data for a single Equity and returns a 1 row df to be appended to a larger dataset
@@ -85,7 +83,7 @@ class APIHandler:
         inst['fundamental']['description'] = inst['description']
         inst['fundamental']['assetType'] = inst['assetType']
 
-        date_accessed = dt.today()
+        date_accessed = dt.datetime.now()
 
         for key, val in inst['fundamental'].items():
             inst[key] = val
