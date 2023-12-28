@@ -55,7 +55,8 @@ class APIHandler:
                 exit()
 
         positions_list = []
-        date_accessed = dt.datetime.now()
+        dates = []
+        
 
         for idx in acct['securitiesAccount']['positions']:
             if idx['instrument']['symbol'] == 'MMDA1':
@@ -66,11 +67,15 @@ class APIHandler:
                 idx['assetType'] = idx['instrument']['assetType']
 
                 del(idx['instrument'])
+
+                date_accessed = dt.datetime.now()
+                idx['dateAccessed'] = date_accessed
+
                 positions_list.append(idx)
 
         positions_df = pd.DataFrame(positions_list)
-        positions_df.set_index('symbol', inplace=True)
-        positions_df['date_accessed'] = date_accessed
+        positions_df.set_index('dateAccessed', inplace=True)
+        
 
         return positions_df # Print the positions dataframe like in v6
 
@@ -79,20 +84,15 @@ class APIHandler:
     def get_instrument(self, symbol: str)->pd.DataFrame:
         inst = self.c.search_instruments(symbol, self.c.Instrument.Projection('fundamental')).json()
         inst = inst[symbol]
+        inst['fundamental']['symbol'] = symbol
         inst['fundamental']['cusip'] = inst['cusip']
         inst['fundamental']['description'] = inst['description']
         inst['fundamental']['assetType'] = inst['assetType']
 
-        date_accessed = dt.datetime.now()
+        date_accessed = [dt.datetime.now()]
 
-        for key, val in inst['fundamental'].items():
-            inst[key] = val
-        
-        del inst['fundamental']
-        inst_df = pd.DataFrame() # TODO
-        inst_df.set_index('symbol', inplace=True)
-        inst_df['date_accessed'] = date_accessed
-        # print(inst_df)
+        inst2 = inst['fundamental']
+        inst_df = pd.DataFrame([inst2], index=date_accessed)
         return inst_df
 
     def get_candles(self, symbol: str, periods: str, start: dt, end: dt)->pd.DataFrame:
@@ -100,7 +100,7 @@ class APIHandler:
         if periods == '1m':
             data = self.c.get_price_history_every_minute(symbol, start_datetime=start, end_datetime=end).json()['candles']
         elif periods == '5m':
-            data = self.c.get_price_history_every_five_minutes(symbol, start_datetime=start, end_datetime=self.end).json()['candles']
+            data = self.c.get_price_history_every_five_minutes(symbol, start_datetime=start, end_datetime=end).json()['candles']
         elif periods == '10m':
             data = self.c.get_price_history_every_ten_minutes(symbol, start_datetime=start, end_datetime=end).json()['candles']
         elif periods == '15m':

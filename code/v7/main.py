@@ -13,10 +13,21 @@ mpl_chart_style = 'Solarize_Light2'
 
 ah = APIHandler(tda_api_configs, output_path)
 acct_dict = ah.get_account_with_positions()
-print(acct_dict)
+#print(acct_dict)
+
 print()
 print('positions symbols:')
 print(ah.get_position_symbols(acct_dict))
+
 print()
 print('positions dataframe:')
-print(ah.get_position_df(acct_dict).head())
+#print(ah.get_position_df(acct_dict).head())
+print(ah.get_position_df(acct_dict).columns)
+
+print()
+print('price_history_AMD')
+#print(ah.get_candles('AMD', '5m', start_dt, end_dt))
+
+print()
+print('Instruments_AMD')
+print(ah.get_instrument('AMD').columns)
