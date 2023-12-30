@@ -78,12 +78,18 @@ class DataProcessor:
             df = pd.read_pickle(fp)
         elif filetype == "xlsx" & filename[:-5] == ".xlsx":
             # TODO: Add Later
+            df = {} # df will now be a dict of all the dataframes in the excel file
+            df = self.__clean_xl_sheet(fp)
             pass
         else:
             print("invalid file type! Exiting...")
             exit()
         
         return df
+    
+    def __clean_xl_sheet(self, fp: str) ->dict:
+        # Go through the Excel File and append each sheet to the dict as a key-value pair 'sheetName' : DataFrame
+        pass
 
 
 
