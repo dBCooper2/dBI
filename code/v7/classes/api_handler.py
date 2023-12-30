@@ -47,18 +47,18 @@ class APIHandler:
 
 
     
-    # Creates a dataframe with the Stock Symbol as the index, with the date the api was accessed(calls datetime.today())
+    # Creates a dataframe with the Stock Symbol as the index, with the date the api was accessed(calls datetime.now())
     def get_position_df(self, acct)->pd.DataFrame:
         if isinstance(acct, dict) == False:
                 print(acct)
-                print('acct is not a list!! It must be an index')
+                print('acct is not a list!')
                 exit()
 
         positions_list = []
-        dates = []
         
 
         for idx in acct['securitiesAccount']['positions']:
+            print(idx)
             if idx['instrument']['symbol'] == 'MMDA1':
                 continue
             else: 

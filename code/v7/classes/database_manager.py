@@ -5,8 +5,28 @@ class DatabaseManager_SQLite:
     def __init__(self, db_name: str) -> None:
         self.conn = db.connect(db_name)
         self.cur = self.conn.cursor()
+
+
+    def insert_data(self, table_name: str, df:pd.DataFrame):
+        try:
+            df.to_sql(table_name, self.conn, if_exists='append')
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+            self.conn.rollback()
+        else:
+            self.conn.close()
+            exit()
+
+
+    def close_db(self):
+        self.conn.commit()
+        self.conn.close()
+
+"""
+# Add Later if Applicable:
         # add code to create the tables here
-        pos_create_str = """
+        pos_create_str = 
         CREATE TABLE IF NOT EXISTS positions(
             shortQuantity type,
             averagePrice type,
@@ -25,8 +45,8 @@ class DatabaseManager_SQLite:
             agedQuantity type,
             date_accessed type
         )
-        """
-        inst_create_str = """
+        
+        inst_create_str = 
         CREATE TABLE IF NOT EXISTS instruments(
             symbol type,
             high52 type,
@@ -78,28 +98,11 @@ class DatabaseManager_SQLite:
             description type,
             assetType type
         )
-        """
         self.cur.execute(pos_create_str)
         print('positions table_created')
         self.cur.execute(inst_create_str)
         print('instruments table created')
 
-    def insert_data(self, table_name: str, df:pd.DataFrame):
-        try:
-            df.to_sql(table_name, self.conn, if_exists='append')
-            self.conn.commit()
-        except Exception as e:
-            print(e)
-            self.conn.rollback()
-        else:
-            conn.close()
-            exit()
-
-    def close_db(self):
-        self.conn.commit()
-        self.conn.close()
-
-
-
 dbm = DatabaseManager_SQLite('test')
 dbm.close_db()
+"""
