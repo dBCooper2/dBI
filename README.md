@@ -1,5 +1,12 @@
 # dBI - Business Intelligence Tools for tda-api and TDAmeritrade Developer Accounts
+# NOTE: This Project is Now Deprecated, the new version can be found at...
 
+https://github.com/dBCooper2/financial-modelling
+
+This Project stopped working on my local machine because I had not set up a venv, and the project started breaking as a result of libraries not being recognized by my interpreter. I will be working in the new repository and am currently transferring the useful parts of the project over. 
+
+
+# Old Notes: [Deprecated]
 ### Note: This Project is NOT FINISHED
 The project is just a collection of functions and classes for now. This will be deleted and a release will be created when the project is finished.
 
