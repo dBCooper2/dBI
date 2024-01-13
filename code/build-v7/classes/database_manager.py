@@ -1,27 +1,36 @@
 import sqlite3 as db
 import pandas as pd
+import logging as l
 
 class DatabaseManager_SQLite:
     def __init__(self, db_name: str) -> None:
         self.conn = db.connect(db_name)
+        l.info('Database Connection Established.')
         self.cur = self.conn.cursor()
+        l.info('Cursor Created.')
 
 
     def insert_data(self, table_name: str, df:pd.DataFrame):
+        l.info('Attempting DataFrame to_sql() method...')
         try:
             df.to_sql(table_name, self.conn, if_exists='append')
+            l.info('to_sql succeeded, committing changes...')
             self.conn.commit()
         except Exception as e:
+            l.error('to_sql() Failed! Rolling Back Changes...')
             print(e)
             self.conn.rollback()
+            l.info('Changes Rolled Back')
         else:
             self.conn.close()
             exit()
 
 
     def close_db(self):
+        l.info('Committing Changes and Closing...')
         self.conn.commit()
         self.conn.close()
+        l.info('Changes Committed, DB Connection Closed.')
 
 """
 # Add Later if Applicable:
